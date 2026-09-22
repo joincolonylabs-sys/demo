@@ -129,6 +129,8 @@ export default function Home() {
   const [dansJupiter, setDansJupiter] = useState(false)
   // Destination retenue par la pop-up d'ouverture (null = pop-up fermee)
   const [popupVers, setPopupVers] = useState(null)
+  // Ecran de transition affiche apres Open, avant la page suivante
+  const [transition, setTransition] = useState(false)
   useEffect(() => setDansJupiter(estDansJupiter()), [])
 
   // Logo et mot Jupiter : simple rechargement de la page
@@ -158,11 +160,14 @@ export default function Home() {
     setPopupVers('/claim')
   }
 
-  // Bouton Open de la pop-up : on part vers la destination retenue.
+  // Bouton Open de la pop-up : on affiche la transition, puis on part vers la
+  // destination retenue.
   const confirmerOuverture = () => {
     const cible = popupVers
     setPopupVers(null)
-    window.location.href = dansJupiter ? `${cible}?jup=1` : cible
+    setTransition(true)
+    const dest = dansJupiter ? `${cible}?jup=1` : cible
+    setTimeout(() => { window.location.href = dest }, 1900)
   }
 
   // Reste de l'en-tete : ouvre cette meme page dans Jupiter Mobile.
@@ -259,6 +264,43 @@ export default function Home() {
         @keyframes pop-apparait {
           from { transform: scale(0.92); opacity: 0; }
           to   { transform: scale(1); opacity: 1; }
+        }
+        /* Ecran de transition apres Open */
+        .trans-fond {
+          position: fixed; inset: 0; z-index: 60;
+          background: #02060E;
+          display: flex; flex-direction: column; align-items: center;
+          animation: pop-fondu 0.2s ease-out;
+        }
+        .trans-icone {
+          width: 128px; height: 128px; margin-top: 9vh;
+          background: #000; border: 2px solid #2f8f52; border-radius: 30px;
+          box-shadow: 0 0 24px rgba(76, 224, 122, 0.25);
+          animation: trans-entree 0.4s cubic-bezier(.2, .8, .2, 1);
+        }
+        .trans-plein { opacity: 0; animation: trans-plein-in 0.3s ease 1s forwards; }
+        .trans-arc {
+          transform-origin: 50% 50%;
+          animation: trans-tourne 0.85s linear infinite, trans-arc-out 0.3s ease 1s forwards;
+        }
+        .trans-chevron { animation: trans-fade-out 0.25s ease 0.95s forwards; }
+        .trans-coche {
+          opacity: 0; transform-origin: 50% 50%;
+          animation: trans-coche-in 0.35s cubic-bezier(.2, .9, .3, 1.2) 1.05s forwards;
+        }
+        .trans-logo {
+          position: absolute; top: 50%; left: 50%;
+          width: 92px; height: 92px; transform: translate(-50%, -50%);
+        }
+        @keyframes trans-entree { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes trans-tourne { to { transform: rotate(360deg); } }
+        @keyframes trans-arc-out { to { opacity: 0; } }
+        @keyframes trans-plein-in { to { opacity: 1; } }
+        @keyframes trans-fade-out { to { opacity: 0; } }
+        @keyframes trans-coche-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        @media (prefers-reduced-motion: reduce) {
+          .trans-arc, .trans-chevron, .trans-coche, .trans-plein, .trans-icone { animation: none; }
+          .trans-arc { display: none; } .trans-plein, .trans-coche { opacity: 1; }
         }
       `}</style>
 
@@ -395,6 +437,21 @@ export default function Home() {
               <button className="pop-btn pop-btn-fort" onClick={confirmerOuverture}>Open</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {transition && (
+        <div className="trans-fond">
+          <div className="trans-icone">
+            <svg viewBox="0 0 100 100" width="100%" height="100%">
+              <circle cx="50" cy="50" r="33" fill="none" stroke="#173224" strokeWidth="4" />
+              <circle className="trans-plein" cx="50" cy="50" r="33" fill="none" stroke="#4CE07A" strokeWidth="4" />
+              <circle className="trans-arc" cx="50" cy="50" r="33" fill="none" stroke="#4CE07A" strokeWidth="4" strokeLinecap="round" strokeDasharray="52 155" />
+              <path className="trans-chevron" d="M38 45 L50 56 L62 45" fill="none" stroke="#4CE07A" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+              <path className="trans-coche" d="M37 50 L46 60 L64 40" fill="none" stroke="#4CE07A" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <img className="trans-logo" src="/assets/jupiter-logo.png" alt="Jupiter" />
         </div>
       )}
     </>
