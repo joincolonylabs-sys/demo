@@ -29,6 +29,8 @@ function estDansJupiter() {
   return typeof window.jupiter !== 'undefined'
 }
 
+const POLICE = "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+
 const CYAN = '#41EFDB'
 const WHITE = '#FFFFFF'
 const SUB = '#DCE3E9'
@@ -112,32 +114,26 @@ export default function Home() {
       <style jsx global>{`
         html, body { margin: 0; padding: 0; background: #030D14; }
         .page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
-        /* prolonge la derniere ligne de la maquette jusqu'en bas de l'ecran,
-           plutot que d'etirer l'image ou de laisser une bande noire */
-        .prolonge {
-          flex: 1 0 auto;
-          background-image: url(/assets/bord-bas.png);
+        .bloc { position: relative; width: 100%; flex: 0 0 auto; }
+        .fond { display: block; width: 100%; height: auto; }
+        .calque { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        /* Seule la ligne 1165 de la maquette s'etire ici, celle qui passe juste
+           au-dessus du telephone. Le bloc "Ready to claim" s'allonge donc et le
+           pied de page descend au bas de l'ecran, sans qu'aucun dessin ne soit
+           deforme ni recouvert. Sur un ecran plus court, cette bande disparait. */
+        .milieu {
+          flex: 1 1 auto;
+          min-height: 0;
+          background-image: url(/assets/bord-milieu.png);
           background-size: 100% 100%;
           background-repeat: no-repeat;
         }
       `}</style>
 
       <div className="page">
-      <div style={{ position: 'relative', width: '100%' }}>
-        <img src="/assets/bg-notext.webp" alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
-
-        <svg
-          viewBox="0 0 1024 1536"
-          preserveAspectRatio="xMidYMid meet"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            fontFamily: "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-          }}
-        >
+      <div className="bloc">
+        <img src="/assets/bg-haut.webp" alt="" className="fond" />
+        <svg viewBox="0 0 1024 1165" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
           {/* ---------- EN-TETE ---------- */}
           <Tx x={105} y={54} size={27} weight={700} ls={-0.015}>Jupiter</Tx>
           <Tx x={234} y={51} size={14.5} weight={500} fill={NAV} w={33}>Swap</Tx>
@@ -195,6 +191,24 @@ export default function Home() {
           <Tx x={906} y={1058} size={15} weight={500} fill={TILE} anchor="middle" w={33}>Other</Tx>
           <Tx x={906} y={1077} size={15} weight={500} fill={TILE} anchor="middle" w={86}>Contributions</Tx>
 
+          {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
+          <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
+          <Zone x={228} y={30} w={46} h={32} onClick={versJupiter} label="Swap" />
+          <Zone x={298} y={30} w={47} h={32} onClick={versJupiter} label="Perps" />
+          <Zone x={369} y={30} w={42} h={32} onClick={versJupiter} label="Lend" />
+          <Zone x={436} y={30} w={60} h={32} onClick={versJupiter} label="Airdrop" />
+          <Zone x={522} y={30} w={63} h={32} onClick={versJupiter} label="More" />
+          <Zone x={810} y={20} w={172} h={48} onClick={versJupiter} label="Launch App" />
+
+          <image href="/assets/note-built.png" x={838} y={344} width={168} />
+        </svg>
+      </div>
+
+      <div className="milieu" />
+
+      <div className="bloc">
+        <img src="/assets/bg-bas.webp" alt="" className="fond" />
+        <svg viewBox="0 1165 1024 371" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
           {/* ---------- PRET A RECLAMER ---------- */}
           <Tx x={87} y={1219} size={45.5} weight={800} w={332}>Ready to claim?</Tx>
           <Tx x={87} y={1258} size={21} fill={SUB} w={486}>Connect your eligible Solana wallet and claim your JUP now.</Tx>
@@ -207,21 +221,10 @@ export default function Home() {
           <Tx x={869} y={1476.5} size={13.8} fill={FOOT} w={41}>Support</Tx>
           <Tx x={936} y={1476.5} size={13.8} fill={FOOT} w={31}>Terms</Tx>
 
-          {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
-          <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
-          <Zone x={228} y={30} w={46} h={32} onClick={versJupiter} label="Swap" />
-          <Zone x={298} y={30} w={47} h={32} onClick={versJupiter} label="Perps" />
-          <Zone x={369} y={30} w={42} h={32} onClick={versJupiter} label="Lend" />
-          <Zone x={436} y={30} w={60} h={32} onClick={versJupiter} label="Airdrop" />
-          <Zone x={522} y={30} w={63} h={32} onClick={versJupiter} label="More" />
-          <Zone x={810} y={20} w={172} h={48} onClick={versJupiter} label="Launch App" />
-
-          {/* annotations manuscrites, decoupees de la maquette */}
-          <image href="/assets/note-built.png" x={838} y={344} width={168} />
+          {/* annotation manuscrite, decoupee de la maquette */}
           <image href="/assets/note-same.png" x={838} y={1226} width={168} />
         </svg>
       </div>
-      <div className="prolonge" />
       </div>
     </>
   )
