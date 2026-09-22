@@ -2,12 +2,15 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
 /*
- * La maquette (1024 x 1536) est decoupee en cinq tranches, separees par quatre
- * lignes choisies dans du fond uni : 585, 865, 1126 et 1402. Entre deux
- * tranches, seule cette ligne s'etire, a parts egales, pour que la page
+ * La maquette (1024 x 1536) est decoupee en sept tranches, separees par six
+ * lignes choisies dans du fond uni : 83, 585, 835, 865, 1126 et 1402. Entre
+ * deux tranches, seule cette ligne s'etire, a parts egales, pour que la page
  * touche le bas de l'ecran sur un telephone. Aucun dessin n'est donc deforme
- * ni recouvert, et sur un ecran plus court les quatre espaces se reduisent a
+ * ni recouvert, et sur un ecran plus court les six espaces se reduisent a
  * rien : la page redevient exactement celle de la maquette.
+ *
+ * Sur un ecran plus haut que large, le pied de page sort du defilement : il
+ * reste en bas pendant que le reste bouge, y compris au rebond.
  *
  * Les textes sont rejoues en SVG. Le viewBox de chaque tranche reprend les
  * coordonnees de la maquette, si bien que x, y et w ci-dessous sont les
@@ -15,7 +18,7 @@ import { useEffect, useState } from 'react'
  * texte, verrouillee par textLength.
  */
 
-const COUPES = [585, 865, 1126, 1402]
+const COUPES = [83, 585, 835, 865, 1126, 1402]
 const POLICE = "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
 
 // Ouvre la page courante dans le navigateur integre de Jupiter Mobile.
@@ -138,6 +141,7 @@ export default function Home() {
       <style jsx global>{`
         html, body { margin: 0; padding: 0; background: #030D14; }
         .page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+        .defilant { display: flex; flex-direction: column; flex: 1 1 auto; }
         .bloc { position: relative; width: 100%; flex: 0 0 auto; }
         .fond { display: block; width: 100%; height: auto; }
         .calque { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
@@ -147,9 +151,19 @@ export default function Home() {
           background-size: 100% 100%;
           background-repeat: no-repeat;
         }
+        /* Des que la page tient dans la hauteur de l'ecran, c'est-a-dire des
+           que l'ecran est plus etire que la maquette, le pied de page sort du
+           defilement et le reste bouge sous lui. Le rebond du telephone joue
+           alors sur le contenu seul, le pied de page ne suit plus. */
+        @media (max-aspect-ratio: 1024 / 1536) {
+          html, body { height: 100%; overflow: hidden; }
+          .page { height: 100vh; height: 100dvh; }
+          .defilant { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        }
       `}</style>
 
       <div className="page">
+        <div className="defilant">
         <Tranche n={1} y0={0} y1={COUPES[0]}>
           {/* ---------- EN-TETE ---------- */}
           <Tx x={105} y={54} size={27} weight={700} ls={-0.015}>Jupiter</Tx>
@@ -160,29 +174,6 @@ export default function Home() {
           <Tx x={528} y={51} size={14.5} weight={500} fill={NAV} w={32}>More</Tx>
           <path d="M567 44.5 L572.5 50 L578 44.5" fill="none" stroke={NAV} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           <Tx x={858} y={48.5} size={15} weight={600} w={79.5}>Launch App</Tx>
-
-          {/* ---------- HERO ---------- */}
-          <Tx x={51} y={137} size={11.5} weight={600} fill={EYEBROW} w={212} fit="spacing">SOLANA&rsquo;S LIQUIDITY HUB</Tx>
-          <text x={51} y={218} fontSize={80} fontWeight={800} fill={WHITE} textLength={326} lengthAdjust="spacingAndGlyphs">
-            The <tspan fill={CYAN}>JUP</tspan>
-          </text>
-          <Tx x={51} y={287} size={80} weight={800} w={491}>Airdrop is live.</Tx>
-          <Tx x={51} y={334} size={21} fill={SUB} w={462}>Eligible Solana wallets can now claim their allocation.</Tx>
-          <Tx x={51} y={363.5} size={15} fill={DIM} w={472}>A reward for those who helped grow the Solana ecosystem with Jupiter.</Tx>
-          <Tx x={91.5} y={429.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
-          <Tx x={345} y={429.5} size={18} weight={600} w={83}>Learn more</Tx>
-
-          {/* ---------- BARRE DE METRIQUES ---------- */}
-          <Tx x={137} y={516} size={10} weight={600} fill={LABEL} w={54} fit="spacing">NETWORK</Tx>
-          <Tx x={137} y={543.5} size={20} weight={700} w={53}>Solana</Tx>
-          <Tx x={385} y={516} size={10} weight={600} fill={LABEL} w={36} fit="spacing">TOKEN</Tx>
-          <Tx x={385} y={543.5} size={20} weight={700} w={33}>JUP</Tx>
-          <Tx x={608} y={516} size={10} weight={600} fill={LABEL} w={41} fit="spacing">STATUS</Tx>
-          <Tx x={608} y={543.5} size={20} weight={700} w={30}>Live</Tx>
-          <Tx x={845} y={516} size={10} weight={600} fill={LABEL} w={65} fit="spacing">COMMUNITY</Tx>
-          <Tx x={845} y={543.5} size={20} weight={700} w={100}>700K+ users</Tx>
-
-          <image href="/assets/note-built.png" x={838} y={344} width={168} />
 
           {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
           <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
@@ -197,27 +188,59 @@ export default function Home() {
         <Ecart n={1} />
 
         <Tranche n={2} y0={COUPES[0]} y1={COUPES[1]}>
+          {/* ---------- HERO ---------- */}
+          <Tx x={51} y={137} size={11.5} weight={600} fill={EYEBROW} w={212} fit="spacing">SOLANA&rsquo;S LIQUIDITY HUB</Tx>
+          <text x={51} y={218} fontSize={80} fontWeight={800} fill={WHITE} textLength={326} lengthAdjust="spacingAndGlyphs">
+            The <tspan fill={CYAN}>JUP</tspan>
+          </text>
+          <Tx x={51} y={287} size={80} weight={800} w={491}>Airdrop is live.</Tx>
+          <Tx x={51} y={334} size={21} fill={SUB} w={462}>Eligible Solana wallets can now claim their allocation.</Tx>
+          <Tx x={51} y={363.5} size={15} fill={DIM} w={472}>A reward for those who helped grow the Solana ecosystem with Jupiter.</Tx>
+          <Tx x={91.5} y={429.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
+          <Tx x={345} y={429.5} size={18} weight={600} w={83}>Learn more</Tx>
+
+          <image href="/assets/note-built.png" x={838} y={344} width={168} />
+
+          {/* ---------- BARRE DE METRIQUES ---------- */}
+          <Tx x={137} y={516} size={10} weight={600} fill={LABEL} w={54} fit="spacing">NETWORK</Tx>
+          <Tx x={137} y={543.5} size={20} weight={700} w={53}>Solana</Tx>
+          <Tx x={385} y={516} size={10} weight={600} fill={LABEL} w={36} fit="spacing">TOKEN</Tx>
+          <Tx x={385} y={543.5} size={20} weight={700} w={33}>JUP</Tx>
+          <Tx x={608} y={516} size={10} weight={600} fill={LABEL} w={41} fit="spacing">STATUS</Tx>
+          <Tx x={608} y={543.5} size={20} weight={700} w={30}>Live</Tx>
+          <Tx x={845} y={516} size={10} weight={600} fill={LABEL} w={65} fit="spacing">COMMUNITY</Tx>
+          <Tx x={845} y={543.5} size={20} weight={700} w={100}>700K+ users</Tx>
+        </Tranche>
+
+        <Ecart n={2} />
+
+        <Tranche n={3} y0={COUPES[1]} y1={COUPES[2]}>
           {/* ---------- A PROPOS ---------- */}
           <Tx x={51} y={638.5} size={11.5} weight={600} fill={EYEBROW} w={161} fit="spacing">ABOUT THE AIRDROP</Tx>
           <Tx x={51} y={692} size={40} weight={800} w={514}>Recognizing our community.</Tx>
-          <Tx x={51} y={743} size={22} fill={BODY} w={481}>The Jupiter Airdrop rewards users whose onchain</Tx>
-          <Tx x={51} y={775.5} size={22} fill={BODY} w={434}>participation contributed to Jupiter&rsquo;s growth</Tx>
-          <Tx x={51} y={808} size={22} fill={BODY} w={291}>across the Solana ecosystem.</Tx>
+          <Tx x={51} y={751} size={22} fill={BODY} w={481}>The Jupiter Airdrop rewards users whose onchain</Tx>
+          <Tx x={51} y={783.5} size={22} fill={BODY} w={434}>participation contributed to Jupiter&rsquo;s growth</Tx>
+          <Tx x={51} y={816} size={22} fill={BODY} w={291}>across the Solana ecosystem.</Tx>
 
           <Tx x={770} y={708} size={26.5} weight={700} w={53}>JUP</Tx>
           <Tx x={773} y={737} size={16} fill={CARD} w={78}>More users.</Tx>
           <Tx x={773} y={761.5} size={16} fill={CARD} w={155}>A stronger ecosystem.</Tx>
         </Tranche>
 
-        <Ecart n={2} />
+        <Ecart n={3} />
 
-        <Tranche n={3} y0={COUPES[1]} y1={COUPES[2]}>
+        {/* le trait de separation, seul, pour qu'il reste au milieu du vide */}
+        <Tranche n={4} y0={COUPES[2]} y1={COUPES[3]} />
+
+        <Ecart n={4} />
+
+        <Tranche n={5} y0={COUPES[3]} y1={COUPES[4]}>
           {/* ---------- ELIGIBILITE ---------- */}
           <Tx x={51} y={906.5} size={11.5} weight={600} fill={EYEBROW} w={158} fit="spacing">WHO MAY QUALIFY?</Tx>
           <Tx x={51} y={956} size={37} weight={800} w={337}>Eligibility is based on</Tx>
           <Tx x={51} y={997} size={37} weight={800} w={349}>your onchain activity.</Tx>
-          <Tx x={51} y={1041.5} size={19.5} fill={BODY} w={441}>We look at real onchain usage, not social campaigns</Tx>
-          <Tx x={51} y={1071.5} size={19.5} fill={BODY} w={177}>or promotional tasks.</Tx>
+          <Tx x={51} y={1049.5} size={19.5} fill={BODY} w={441}>We look at real onchain usage, not social campaigns</Tx>
+          <Tx x={51} y={1079.5} size={19.5} fill={BODY} w={177}>or promotional tasks.</Tx>
 
           <Tx x={620} y={954.5} size={15} weight={500} fill={TILE} anchor="middle" w={39}>Swaps</Tx>
           <Tx x={761} y={954.5} size={15} weight={500} fill={TILE} anchor="middle" w={34}>Perps</Tx>
@@ -228,9 +251,9 @@ export default function Home() {
           <Tx x={906} y={1077} size={15} weight={500} fill={TILE} anchor="middle" w={86}>Contributions</Tx>
         </Tranche>
 
-        <Ecart n={3} />
+        <Ecart n={5} />
 
-        <Tranche n={4} y0={COUPES[2]} y1={COUPES[3]}>
+        <Tranche n={6} y0={COUPES[4]} y1={COUPES[5]}>
           {/* ---------- PRET A RECLAMER ---------- */}
           <Tx x={87} y={1219} size={45.5} weight={800} w={332}>Ready to claim?</Tx>
           <Tx x={87} y={1258} size={21} fill={SUB} w={486}>Connect your eligible Solana wallet and claim your JUP now.</Tx>
@@ -239,9 +262,10 @@ export default function Home() {
           <image href="/assets/note-same.png" x={838} y={1226} width={168} />
         </Tranche>
 
-        <Ecart n={4} />
+        <Ecart n={6} />
+        </div>
 
-        <Tranche n={5} y0={COUPES[3]} y1={1536}>
+        <Tranche n={7} y0={COUPES[5]} y1={1536}>
           {/* ---------- PIED DE PAGE ---------- */}
           <Tx x={103} y={1480} size={22.5} weight={700} ls={-0.015}>Jupiter</Tx>
           <Tx x={196} y={1477.5} size={13.8} fill="#8B96A1" w={151}>Build. Trade. Grow. Together.</Tx>
