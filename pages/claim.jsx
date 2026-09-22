@@ -11,6 +11,10 @@ import { useEffect, useState } from 'react'
 const COUPES = [115, 575, 699, 1490]
 const POLICE = "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
 
+// Depuis cet ecran, les boutons Connect Wallet ouvrent Jupiter Mobile.
+const OUVRIR_DANS_JUPITER = (url) => `jupiter://browse/${encodeURIComponent(url)}`
+const INSTALLER_JUPITER = 'https://jup.ag/mobile'
+
 const BLANC = '#FFFFFF'
 const GRIS = '#A8B5C0'
 const CORPS = '#B8C4CC'
@@ -125,6 +129,19 @@ export default function Claim() {
     window.location.href = dansJupiter ? '/?jup=1' : '/'
   }
 
+  // Connect Wallet : ouvre Jupiter Mobile sur cette meme page. Si on y est
+  // deja, on reste ici, prets pour l'etape suivante.
+  const connecter = (e) => {
+    e.preventDefault()
+    if (dansJupiter) return
+    const cible = `${window.location.origin}/claim?jup=1`
+    const repli = setTimeout(() => {
+      if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
+    }, 1500)
+    window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
+    window.location.href = OUVRIR_DANS_JUPITER(cible)
+  }
+
   return (
     <>
       <Head>
@@ -137,10 +154,10 @@ export default function Claim() {
       </Head>
 
       <style jsx global>{`
-        html, body { margin: 0; padding: 0; background: #02070A; }
-        .page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+        html, body { margin: 0; padding: 0; background: #02070A; width: 100%; overflow-x: hidden; }
+        .page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; width: 100%; }
         .bloc { position: relative; width: 100%; flex: 0 0 auto; }
-        .fond { display: block; width: 100%; height: auto; }
+        .fond { display: block; width: 100%; max-width: 100%; height: auto; }
         .calque { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         .ecart { flex: 1 1 0; min-height: 0; background-size: 100% 100%; background-repeat: no-repeat; }
         .reflet {
@@ -162,6 +179,7 @@ export default function Claim() {
           <Tx x={762} y={70} size={18} weight={600} fill="#D9F5A8" w={120}>Connect Wallet</Tx>
           <Reflet id="cw-haut" x={699} y={40} w={209} h={46} r={23} duree={3} teinte="#C8F58A" force={0.22} />
           <Zone x={118} y={38} w={152} h={52} onClick={versAccueil} label="Jupiter, accueil" />
+          <Zone x={697} y={34} w={228} h={60} onClick={connecter} label="Connect Wallet" />
         </Tranche>
 
         <Ecart n={1} />
@@ -224,6 +242,7 @@ export default function Claim() {
 
           <Tx x={452} y={1302.1} size={21} weight={700} fill={ENCRE} w={165}>Connect Wallet</Tx>
           <Reflet id="cw-bas" x={136} y={1261} w={751} h={67} r={17} duree={3.6} delai={0.8} force={0.42} />
+          <Zone x={136} y={1261} w={751} h={67} onClick={connecter} label="Connect Wallet" />
 
           <Tx x={334} y={1399} size={15} fill={PIED} w={56}>Audited</Tx>
           <Tx x={468} y={1399} size={15} fill={PIED} w={104}>Non-custodial</Tx>

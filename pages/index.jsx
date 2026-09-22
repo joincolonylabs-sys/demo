@@ -149,10 +149,11 @@ export default function Home() {
     window.location.href = OUVRIR_DANS_JUPITER(cible)
   }
 
-  // Les deux boutons Claim mènent a l'etape suivante
+  // Les deux boutons Claim menent a l'etape suivante, dans le meme navigateur.
+  // C'est la page /claim qui proposera ensuite d'ouvrir Jupiter.
   const versClaim = (e) => {
     e.preventDefault()
-    ouvrir('/claim')
+    window.location.href = dansJupiter ? '/claim?jup=1' : '/claim'
   }
 
   // Reste de l'en-tete : ouvre cette meme page dans Jupiter Mobile.
@@ -181,11 +182,11 @@ export default function Home() {
       </Head>
 
       <style jsx global>{`
-        html, body { margin: 0; padding: 0; background: #030D14; }
-        .page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
-        .defilant { display: flex; flex-direction: column; flex: 1 1 auto; }
+        html, body { margin: 0; padding: 0; background: #030D14; width: 100%; overflow-x: hidden; }
+        .page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; width: 100%; }
+        .defilant { display: flex; flex-direction: column; flex: 1 1 auto; width: 100%; }
         .bloc { position: relative; width: 100%; flex: 0 0 auto; }
-        .fond { display: block; width: 100%; height: auto; }
+        .fond { display: block; width: 100%; max-width: 100%; height: auto; }
         .calque { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         .reflet {
           animation-name: balayer;
@@ -215,15 +216,6 @@ export default function Home() {
           background-size: 100% 100%;
           background-repeat: no-repeat;
         }
-        /* Des que la page tient dans la hauteur de l'ecran, c'est-a-dire des
-           que l'ecran est plus etire que la maquette, le pied de page sort du
-           defilement et le reste bouge sous lui. Le rebond du telephone joue
-           alors sur le contenu seul, le pied de page ne suit plus. */
-        @media (max-aspect-ratio: 1024 / 1536) {
-          html, body { height: 100%; overflow: hidden; }
-          .page { height: 100vh; height: 100dvh; }
-          .defilant { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        }
       `}</style>
 
       <div className="page">
@@ -237,7 +229,7 @@ export default function Home() {
           <Tx x={442} y={51} size={14.5} weight={500} fill={NAV} w={47}>Airdrop</Tx>
           <Tx x={528} y={51} size={14.5} weight={500} fill={NAV} w={32}>More</Tx>
           <path d="M567 44.5 L572.5 50 L578 44.5" fill="none" stroke={NAV} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-          <Tx x={858} y={49} size={15} weight={600} w={79.5}>Launch App</Tx>
+          <Tx x={836} y={49} size={16} weight={600} w={119}>Launch App</Tx>
           <Reflet id="lancer" x={837} y={22} w={143} h={42} r={21} duree={2.6} teinte="#8BF5E4" force={0.3} aller_retour />
 
           {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
