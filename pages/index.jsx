@@ -9,7 +9,16 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="w-full bg-black flex justify-center">
+      <div
+        className="w-full flex justify-center"
+        style={{
+          backgroundImage: 'url(/assets/background.webp)',
+          backgroundSize: 'auto',
+          backgroundPosition: 'top',
+          backgroundRepeat: 'repeat-y',
+          backgroundColor: '#0a0e27'
+        }}
+      >
         <div className="w-full max-w-[1024px]">
           {/* Header */}
           <img src="/bandeaux/01_menu_header.png" alt="Menu Header" className="w-full h-auto" />
