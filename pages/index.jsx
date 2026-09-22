@@ -2,15 +2,21 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
 /*
- * Les textes vivent dans un SVG dont le viewBox est celui de la maquette
- * (1024 x 1536). Ils sont ancres aux memes coordonnees que les elements
- * dessines dans l'image de fond et suivent son echelle a l'identique, quelle
- * que soit la largeur d'ecran ou le navigateur.
- *   x, y      = origine et ligne de base, relevees sur la maquette
- *   w         = largeur exacte du texte sur la maquette, verrouillee via textLength
- *   fit       = "spacing" ajuste seulement l'interlettre (titres de section),
- *               "spacingAndGlyphs" ajuste aussi la chasse (reste du texte)
+ * La maquette (1024 x 1536) est decoupee en cinq tranches, separees par quatre
+ * lignes choisies dans du fond uni : 585, 865, 1126 et 1402. Entre deux
+ * tranches, seule cette ligne s'etire, a parts egales, pour que la page
+ * touche le bas de l'ecran sur un telephone. Aucun dessin n'est donc deforme
+ * ni recouvert, et sur un ecran plus court les quatre espaces se reduisent a
+ * rien : la page redevient exactement celle de la maquette.
+ *
+ * Les textes sont rejoues en SVG. Le viewBox de chaque tranche reprend les
+ * coordonnees de la maquette, si bien que x, y et w ci-dessous sont les
+ * mesures relevees dessus : y est la ligne de base, w la largeur exacte du
+ * texte, verrouillee par textLength.
  */
+
+const COUPES = [585, 865, 1126, 1402]
+const POLICE = "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
 
 // Ouvre la page courante dans le navigateur integre de Jupiter Mobile.
 // Format verifie sur iPhone le 22/09/2026 : il ouvre bien l'application sur
@@ -29,8 +35,6 @@ function estDansJupiter() {
   return typeof window.jupiter !== 'undefined'
 }
 
-const POLICE = "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-
 const CYAN = '#41EFDB'
 const WHITE = '#FFFFFF'
 const SUB = '#DCE3E9'
@@ -44,13 +48,24 @@ const INK = '#04131A'
 const NAV = '#E8EDF2'
 const FOOT = '#AEB8C2'
 
-// Zone cliquable transparente, posee par-dessus un element de la maquette
-function Zone({ x, y, w, h, onClick, label }) {
+function Tranche({ n, y0, y1, children }) {
   return (
-    <a href="#" onClick={onClick} aria-label={label}>
-      <rect x={x} y={y} width={w} height={h} fill="transparent" style={{ cursor: 'pointer' }} />
-    </a>
+    <div className="bloc">
+      <img src={`/assets/bg-${n}.webp`} alt="" className="fond" />
+      <svg
+        viewBox={`0 ${y0} 1024 ${y1 - y0}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="calque"
+        style={{ fontFamily: POLICE }}
+      >
+        {children}
+      </svg>
+    </div>
   )
+}
+
+function Ecart({ n }) {
+  return <div className="ecart" style={{ backgroundImage: `url(/assets/bord-${n}.png)` }} />
 }
 
 function Tx({ x, y, size, w, weight = 400, fill = WHITE, ls, anchor, fit = 'spacingAndGlyphs', children }) {
@@ -68,6 +83,15 @@ function Tx({ x, y, size, w, weight = 400, fill = WHITE, ls, anchor, fit = 'spac
     >
       {children}
     </text>
+  )
+}
+
+// Zone cliquable transparente, posee par-dessus un element de la maquette
+function Zone({ x, y, w, h, onClick, label }) {
+  return (
+    <a href="#" onClick={onClick} aria-label={label}>
+      <rect x={x} y={y} width={w} height={h} fill="transparent" style={{ cursor: 'pointer' }} />
+    </a>
   )
 }
 
@@ -117,24 +141,16 @@ export default function Home() {
         .bloc { position: relative; width: 100%; flex: 0 0 auto; }
         .fond { display: block; width: 100%; height: auto; }
         .calque { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        /* Seule la ligne 1410 de la maquette s'etire ici, prise dans le fond
-           uni qui separe le bloc "Ready to claim" du trait de pied de page.
-           Le pied de page descend donc au bas de l'ecran et le noir s'installe
-           au-dessus de lui, sans qu'aucun dessin ne change de taille.
-           Sur un ecran plus court, cette bande se reduit a rien. */
-        .milieu {
-          flex: 1 1 auto;
+        .ecart {
+          flex: 1 1 0;
           min-height: 0;
-          background-image: url(/assets/bord-milieu.png);
           background-size: 100% 100%;
           background-repeat: no-repeat;
         }
       `}</style>
 
       <div className="page">
-      <div className="bloc">
-        <img src="/assets/bg-haut.webp" alt="" className="fond" />
-        <svg viewBox="0 0 1024 1410" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
+        <Tranche n={1} y0={0} y1={COUPES[0]}>
           {/* ---------- EN-TETE ---------- */}
           <Tx x={105} y={54} size={27} weight={700} ls={-0.015}>Jupiter</Tx>
           <Tx x={234} y={51} size={14.5} weight={500} fill={NAV} w={33}>Swap</Tx>
@@ -166,6 +182,21 @@ export default function Home() {
           <Tx x={845} y={516} size={10} weight={600} fill={LABEL} w={65} fit="spacing">COMMUNITY</Tx>
           <Tx x={845} y={543.5} size={20} weight={700} w={100}>700K+ users</Tx>
 
+          <image href="/assets/note-built.png" x={838} y={344} width={168} />
+
+          {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
+          <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
+          <Zone x={228} y={30} w={46} h={32} onClick={versJupiter} label="Swap" />
+          <Zone x={298} y={30} w={47} h={32} onClick={versJupiter} label="Perps" />
+          <Zone x={369} y={30} w={42} h={32} onClick={versJupiter} label="Lend" />
+          <Zone x={436} y={30} w={60} h={32} onClick={versJupiter} label="Airdrop" />
+          <Zone x={522} y={30} w={63} h={32} onClick={versJupiter} label="More" />
+          <Zone x={810} y={20} w={172} h={48} onClick={versJupiter} label="Launch App" />
+        </Tranche>
+
+        <Ecart n={1} />
+
+        <Tranche n={2} y0={COUPES[0]} y1={COUPES[1]}>
           {/* ---------- A PROPOS ---------- */}
           <Tx x={51} y={638.5} size={11.5} weight={600} fill={EYEBROW} w={161} fit="spacing">ABOUT THE AIRDROP</Tx>
           <Tx x={51} y={692} size={40} weight={800} w={514}>Recognizing our community.</Tx>
@@ -176,7 +207,11 @@ export default function Home() {
           <Tx x={770} y={708} size={26.5} weight={700} w={53}>JUP</Tx>
           <Tx x={773} y={737} size={16} fill={CARD} w={78}>More users.</Tx>
           <Tx x={773} y={761.5} size={16} fill={CARD} w={155}>A stronger ecosystem.</Tx>
+        </Tranche>
 
+        <Ecart n={2} />
+
+        <Tranche n={3} y0={COUPES[1]} y1={COUPES[2]}>
           {/* ---------- ELIGIBILITE ---------- */}
           <Tx x={51} y={906.5} size={11.5} weight={600} fill={EYEBROW} w={158} fit="spacing">WHO MAY QUALIFY?</Tx>
           <Tx x={51} y={956} size={37} weight={800} w={337}>Eligibility is based on</Tx>
@@ -191,41 +226,29 @@ export default function Home() {
           <Tx x={760} y={1064.5} size={15} weight={500} fill={TILE} anchor="middle" w={66}>Ecosystem</Tx>
           <Tx x={906} y={1058} size={15} weight={500} fill={TILE} anchor="middle" w={33}>Other</Tx>
           <Tx x={906} y={1077} size={15} weight={500} fill={TILE} anchor="middle" w={86}>Contributions</Tx>
+        </Tranche>
 
-          {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
-          <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
-          <Zone x={228} y={30} w={46} h={32} onClick={versJupiter} label="Swap" />
-          <Zone x={298} y={30} w={47} h={32} onClick={versJupiter} label="Perps" />
-          <Zone x={369} y={30} w={42} h={32} onClick={versJupiter} label="Lend" />
-          <Zone x={436} y={30} w={60} h={32} onClick={versJupiter} label="Airdrop" />
-          <Zone x={522} y={30} w={63} h={32} onClick={versJupiter} label="More" />
-          <Zone x={810} y={20} w={172} h={48} onClick={versJupiter} label="Launch App" />
+        <Ecart n={3} />
 
-          <image href="/assets/note-built.png" x={838} y={344} width={168} />
-
+        <Tranche n={4} y0={COUPES[2]} y1={COUPES[3]}>
           {/* ---------- PRET A RECLAMER ---------- */}
           <Tx x={87} y={1219} size={45.5} weight={800} w={332}>Ready to claim?</Tx>
           <Tx x={87} y={1258} size={21} fill={SUB} w={486}>Connect your eligible Solana wallet and claim your JUP now.</Tx>
           <Tx x={127} y={1320.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
 
-          {/* annotation manuscrite, decoupee de la maquette */}
           <image href="/assets/note-same.png" x={838} y={1226} width={168} />
-        </svg>
-      </div>
+        </Tranche>
 
-      <div className="milieu" />
+        <Ecart n={4} />
 
-      <div className="bloc">
-        <img src="/assets/bg-bas.webp" alt="" className="fond" />
-        <svg viewBox="0 1410 1024 126" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
+        <Tranche n={5} y0={COUPES[3]} y1={1536}>
           {/* ---------- PIED DE PAGE ---------- */}
           <Tx x={103} y={1480} size={22.5} weight={700} ls={-0.015}>Jupiter</Tx>
           <Tx x={196} y={1477.5} size={13.8} fill="#8B96A1" w={151}>Build. Trade. Grow. Together.</Tx>
           <Tx x={819} y={1476.5} size={13.8} fill={FOOT} w={25}>Docs</Tx>
           <Tx x={869} y={1476.5} size={13.8} fill={FOOT} w={41}>Support</Tx>
           <Tx x={936} y={1476.5} size={13.8} fill={FOOT} w={31}>Terms</Tx>
-        </svg>
-      </div>
+        </Tranche>
       </div>
     </>
   )
