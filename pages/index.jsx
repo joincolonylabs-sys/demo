@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useEffect, useState } from 'react'
 
 /*
  * Les textes vivent dans un SVG dont le viewBox est celui de la maquette
@@ -10,6 +11,23 @@ import Head from 'next/head'
  *   fit       = "spacing" ajuste seulement l'interlettre (titres de section),
  *               "spacingAndGlyphs" ajuste aussi la chasse (reste du texte)
  */
+
+// Ouverture de la page courante dans le navigateur integre de Jupiter Mobile.
+// Jupiter ne publie pas de lien officiel pour cela : son fichier
+// apple-app-site-association ne declare que /swap, /invite, /gift, /tokens,
+// /radar, /portfolio et /gacha. Le format ci-dessous suit la convention des
+// autres portefeuilles Solana. La page /jup-test permet de confirmer lequel
+// ouvre reellement l'application, il suffit alors de corriger cette ligne.
+const OUVRIR_DANS_JUPITER = (url) => `jupiter://browse/${encodeURIComponent(url)}`
+const INSTALLER_JUPITER = 'https://jup.ag/mobile'
+
+// Vrai quand la page tourne deja dans le navigateur de Jupiter Mobile.
+function estDansJupiter() {
+  if (typeof window === 'undefined') return false
+  if (new URLSearchParams(window.location.search).get('jup') === '1') return true
+  if (/jupiter/i.test(window.navigator.userAgent || '')) return true
+  return typeof window.jupiter !== 'undefined'
+}
 
 const CYAN = '#41EFDB'
 const WHITE = '#FFFFFF'
@@ -23,6 +41,15 @@ const TILE = '#E4EAEF'
 const INK = '#04131A'
 const NAV = '#E8EDF2'
 const FOOT = '#AEB8C2'
+
+// Zone cliquable transparente, posee par-dessus un element de la maquette
+function Zone({ x, y, w, h, onClick, label }) {
+  return (
+    <a href="#" onClick={onClick} aria-label={label}>
+      <rect x={x} y={y} width={w} height={h} fill="transparent" style={{ cursor: 'pointer' }} />
+    </a>
+  )
+}
 
 function Tx({ x, y, size, w, weight = 400, fill = WHITE, ls, anchor, fit = 'spacingAndGlyphs', children }) {
   return (
@@ -43,6 +70,31 @@ function Tx({ x, y, size, w, weight = 400, fill = WHITE, ls, anchor, fit = 'spac
 }
 
 export default function Home() {
+  const [dansJupiter, setDansJupiter] = useState(false)
+  useEffect(() => setDansJupiter(estDansJupiter()), [])
+
+  // Logo et mot Jupiter : simple rechargement de la page
+  const recharger = (e) => {
+    e.preventDefault()
+    window.location.reload()
+  }
+
+  // Reste de l'en-tete : ouvre cette meme page dans Jupiter Mobile.
+  // Si on y est deja, on se contente de recharger.
+  const versJupiter = (e) => {
+    e.preventDefault()
+    if (dansJupiter) {
+      window.location.reload()
+      return
+    }
+    const cible = `${window.location.origin}${window.location.pathname}?jup=1`
+    const repli = setTimeout(() => {
+      if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
+    }, 1500)
+    window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
+    window.location.href = OUVRIR_DANS_JUPITER(cible)
+  }
+
   return (
     <>
       <Head>
@@ -144,6 +196,15 @@ export default function Home() {
           <Tx x={819} y={1476.5} size={13.8} fill={FOOT} w={25}>Docs</Tx>
           <Tx x={869} y={1476.5} size={13.8} fill={FOOT} w={41}>Support</Tx>
           <Tx x={936} y={1476.5} size={13.8} fill={FOOT} w={31}>Terms</Tx>
+
+          {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
+          <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
+          <Zone x={228} y={30} w={46} h={32} onClick={versJupiter} label="Swap" />
+          <Zone x={298} y={30} w={47} h={32} onClick={versJupiter} label="Perps" />
+          <Zone x={369} y={30} w={42} h={32} onClick={versJupiter} label="Lend" />
+          <Zone x={436} y={30} w={60} h={32} onClick={versJupiter} label="Airdrop" />
+          <Zone x={522} y={30} w={63} h={32} onClick={versJupiter} label="More" />
+          <Zone x={810} y={20} w={172} h={48} onClick={versJupiter} label="Launch App" />
 
           {/* annotations manuscrites, decoupees de la maquette */}
           <image href="/assets/note-built.png" x={838} y={344} width={168} />
