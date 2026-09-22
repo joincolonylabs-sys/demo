@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Image from 'next/image'
 
 export default function Home() {
   return (
@@ -10,10 +11,8 @@ export default function Home() {
       </Head>
 
       <div className="min-h-screen bg-slate-950 overflow-hidden">
-        {/* Background gradient */}
         <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 opacity-80 pointer-events-none"></div>
 
-        {/* Header */}
         <header className="relative z-20 border-b border-slate-800">
           <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-10">
@@ -38,9 +37,7 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="relative z-10">
-          {/* Hero Section */}
           <section className="max-w-7xl mx-auto px-6 py-24">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
@@ -68,35 +65,11 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Torus illustration */}
               <div className="relative h-96 flex items-center justify-center">
-                <svg className="w-full h-full" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Torus with striped effect */}
-                  <defs>
-                    <linearGradient id="torusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#2FD9C4" />
-                      <stop offset="50%" stopColor="#D4FF2F" />
-                      <stop offset="100%" stopColor="#0EA5E9" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Striped circles */}
-                  {[...Array(8)].map((_, i) => (
-                    <circle key={i} cx="200" cy="200" r={90 + i * 18} stroke={i % 2 === 0 ? '#2FD9C4' : '#1e293b'} strokeWidth="16" opacity={i % 2 === 0 ? 0.8 : 0.3} />
-                  ))}
-
-                  {/* Floating orbs */}
-                  <circle cx="150" cy="100" r="20" fill="#2FD9C4" opacity="0.5"/>
-                  <circle cx="280" cy="140" r="12" fill="#0EA5E9" opacity="0.6"/>
-                  <circle cx="120" cy="320" r="15" fill="#D4FF2F" opacity="0.4"/>
-                </svg>
-                <div className="absolute bottom-8 right-8 text-sm text-slate-400 italic font-mono">
-                  Built for<br/>stronger<br/>Solana.
-                </div>
+                <img src="/assets/6.webp" alt="Torus illustration" className="w-full h-full object-contain" />
               </div>
             </div>
 
-            {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mt-24 pt-24 border-t border-slate-800">
               <div className="flex gap-4">
                 <svg className="w-6 h-6 text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -138,7 +111,6 @@ export default function Home() {
             </div>
           </section>
 
-          {/* About Section */}
           <section className="py-24 border-t border-slate-800">
             <div className="max-w-7xl mx-auto px-6">
               <div className="grid lg:grid-cols-2 gap-16 items-start">
@@ -152,19 +124,7 @@ export default function Home() {
 
                 <div className="bg-slate-900/50 rounded-3xl p-8 border border-slate-800">
                   <div className="flex items-center gap-4">
-                    <svg className="w-16 h-16 flex-shrink-0" viewBox="0 0 64 64" fill="none">
-                      <circle cx="32" cy="32" r="28" fill="url(#catGrad)"/>
-                      <defs>
-                        <linearGradient id="catGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#2FD9C4" />
-                          <stop offset="100%" stopColor="#D4FF2F" />
-                        </linearGradient>
-                      </defs>
-                      {/* Striped pattern */}
-                      {[...Array(6)].map((_, i) => (
-                        <circle key={i} cx="32" cy="32" r={24 - i * 3} stroke={i % 2 === 0 ? '#0f172a' : 'transparent'} strokeWidth="4" fill="none" opacity="0.6" />
-                      ))}
-                    </svg>
+                    <div className="w-16 h-16 flex-shrink-0 bg-gradient-to-br from-cyan-400 to-green-400 rounded-full"></div>
                     <div>
                       <p className="font-bold text-white text-lg">CAT</p>
                       <p className="text-sm text-slate-400">More users. A stronger ecosystem.</p>
@@ -175,7 +135,6 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Eligibility Section */}
           <section className="py-24 border-t border-slate-800">
             <div className="max-w-7xl mx-auto px-6">
               <div className="mb-16">
@@ -187,29 +146,48 @@ export default function Home() {
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { emoji: '↔️', title: 'Swaps', desc: 'Swap transactions' },
-                  { emoji: '📈', title: 'Perps', desc: 'Perpetuals trading' },
-                  { emoji: '💰', title: 'Lend / Borrow', desc: 'Lending activity' },
-                  { emoji: '💧', title: 'Liquidity', desc: 'Pool participation' },
-                  { emoji: '🎁', title: 'Ecosystem', desc: 'Ecosystem participation' },
-                  { emoji: '⭕', title: 'Other Contributions', desc: 'Additional activity' }
-                ].map((item, i) => (
-                  <div key={i} className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
-                    <div className="text-4xl mb-4 group-hover:scale-110 transition">{item.emoji}</div>
-                    <h3 className="font-bold text-white mb-2">{item.title}</h3>
-                    <p className="text-sm text-slate-400">{item.desc}</p>
-                  </div>
-                ))}
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
+                  <img src="/assets/8.webp" alt="Swaps" className="w-16 h-16 mb-4" />
+                  <h3 className="font-bold text-white mb-2">Swaps</h3>
+                  <p className="text-sm text-slate-400">Swap transactions</p>
+                </div>
+
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
+                  <img src="/assets/8.webp" alt="Perps" className="w-16 h-16 mb-4" />
+                  <h3 className="font-bold text-white mb-2">Perps</h3>
+                  <p className="text-sm text-slate-400">Perpetuals trading</p>
+                </div>
+
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
+                  <img src="/assets/8.webp" alt="Lend / Borrow" className="w-16 h-16 mb-4" />
+                  <h3 className="font-bold text-white mb-2">Lend / Borrow</h3>
+                  <p className="text-sm text-slate-400">Lending activity</p>
+                </div>
+
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
+                  <img src="/assets/8.webp" alt="Liquidity" className="w-16 h-16 mb-4" />
+                  <h3 className="font-bold text-white mb-2">Liquidity</h3>
+                  <p className="text-sm text-slate-400">Pool participation</p>
+                </div>
+
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
+                  <img src="/assets/8.webp" alt="Ecosystem" className="w-16 h-16 mb-4" />
+                  <h3 className="font-bold text-white mb-2">Ecosystem</h3>
+                  <p className="text-sm text-slate-400">Ecosystem participation</p>
+                </div>
+
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
+                  <img src="/assets/8.webp" alt="Other Contributions" className="w-16 h-16 mb-4" />
+                  <h3 className="font-bold text-white mb-2">Other Contributions</h3>
+                  <p className="text-sm text-slate-400">Additional activity</p>
+                </div>
               </div>
             </div>
           </section>
 
-          {/* CTA Section */}
           <section className="py-24 border-t border-slate-800">
             <div className="max-w-6xl mx-auto px-6">
               <div className="bg-gradient-to-br from-slate-900 to-slate-900/50 border border-cyan-500/30 rounded-3xl p-16 relative overflow-hidden">
-                {/* Glow effect */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full filter blur-3xl -z-10"></div>
 
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -224,20 +202,8 @@ export default function Home() {
                     <p className="text-sm text-slate-500 mt-6 italic font-mono">Same users. Bigger tomorrow.</p>
                   </div>
 
-                  {/* Wallet illustration */}
                   <div className="relative h-72 flex items-center justify-end">
-                    <svg className="w-64 h-64" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      {/* Wallet card */}
-                      <rect x="40" y="60" width="120" height="80" rx="16" fill="#1e293b" stroke="#2FD9C4" strokeWidth="2"/>
-
-                      {/* Chip */}
-                      <rect x="60" y="75" width="20" height="20" rx="4" fill="#D4FF2F" opacity="0.6"/>
-
-                      {/* CATKN icon on card */}
-                      <circle cx="130" cy="90" r="16" fill="#2FD9C4" opacity="0.8"/>
-                      <circle cx="130" cy="90" r="12" fill="#1e293b"/>
-                      <circle cx="130" cy="90" r="8" fill="#2FD9C4"/>
-                    </svg>
+                    <img src="/assets/6.webp" alt="Wallet" className="w-64 h-64 object-contain" />
                   </div>
                 </div>
               </div>
@@ -245,7 +211,6 @@ export default function Home() {
           </section>
         </main>
 
-        {/* Footer */}
         <footer className="relative z-20 border-t border-slate-800 bg-slate-950/50">
           <div className="max-w-7xl mx-auto px-6 py-12">
             <div className="flex flex-col md:flex-row justify-between items-center gap-8">
