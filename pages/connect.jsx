@@ -28,10 +28,10 @@ export default function Connect() {
             radial-gradient(120% 90% at 50% 34%, #12203f 0%, #0a1326 42%, #050a16 74%, #03060e 100%);
           font-family: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           display: flex; align-items: center; justify-content: center;
-          padding: 24px 18px;
+          padding: 28px 34px;
         }
         .carte {
-          position: relative; width: 100%; max-width: 440px;
+          position: relative; width: 100%; max-width: 420px;
           background: linear-gradient(180deg, rgba(28,42,72,0.55), rgba(14,22,40,0.6));
           border: 1px solid rgba(120,150,200,0.18);
           border-radius: 28px; padding: 26px 24px 22px;
@@ -61,9 +61,9 @@ export default function Connect() {
           background: rgba(10,16,30,0.45); border: 1px solid rgba(120,150,200,0.14);
         }
         .p-label { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: #808ea3; }
-        .p-ligne { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
-        .case { width: 42px; height: 42px; border-radius: 11px; background: #171f30; }
-        .p-jup { display: flex; align-items: center; gap: 10px; margin-left: 4px; }
+        .p-ligne { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+        .case { flex: 1 1 0; min-width: 0; max-width: 44px; aspect-ratio: 1 / 1; border-radius: 11px; background: #171f30; }
+        .p-jup { display: flex; align-items: center; gap: 10px; margin-left: 4px; flex: 0 0 auto; }
         .p-jup img { width: 30px; height: 30px; }
         .p-jup span { font-size: 27px; font-weight: 700; color: #5f83e8; }
         .p-note { font-size: 16px; color: #8b98ab; margin-top: 16px; }
