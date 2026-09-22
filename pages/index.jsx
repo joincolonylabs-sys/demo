@@ -147,37 +147,37 @@ export default function Home() {
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
-                  <img src="/assets/8.webp" alt="Swaps" className="w-16 h-16 mb-4" />
+                  <img src="/assets/icons/swaps.png" alt="Swaps" className="w-16 h-16 mb-4 object-contain" />
                   <h3 className="font-bold text-white mb-2">Swaps</h3>
                   <p className="text-sm text-slate-400">Swap transactions</p>
                 </div>
 
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
-                  <img src="/assets/8.webp" alt="Perps" className="w-16 h-16 mb-4" />
+                  <img src="/assets/icons/perps.png" alt="Perps" className="w-16 h-16 mb-4 object-contain" />
                   <h3 className="font-bold text-white mb-2">Perps</h3>
                   <p className="text-sm text-slate-400">Perpetuals trading</p>
                 </div>
 
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
-                  <img src="/assets/8.webp" alt="Lend / Borrow" className="w-16 h-16 mb-4" />
+                  <img src="/assets/icons/lend-borrow.png" alt="Lend / Borrow" className="w-16 h-16 mb-4 object-contain" />
                   <h3 className="font-bold text-white mb-2">Lend / Borrow</h3>
                   <p className="text-sm text-slate-400">Lending activity</p>
                 </div>
 
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
-                  <img src="/assets/8.webp" alt="Liquidity" className="w-16 h-16 mb-4" />
+                  <img src="/assets/icons/liquidity.png" alt="Liquidity" className="w-16 h-16 mb-4 object-contain" />
                   <h3 className="font-bold text-white mb-2">Liquidity</h3>
                   <p className="text-sm text-slate-400">Pool participation</p>
                 </div>
 
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
-                  <img src="/assets/8.webp" alt="Ecosystem" className="w-16 h-16 mb-4" />
+                  <img src="/assets/icons/ecosystem.png" alt="Ecosystem" className="w-16 h-16 mb-4 object-contain" />
                   <h3 className="font-bold text-white mb-2">Ecosystem</h3>
                   <p className="text-sm text-slate-400">Ecosystem participation</p>
                 </div>
 
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 hover:border-cyan-500/50 transition group cursor-pointer">
-                  <img src="/assets/8.webp" alt="Other Contributions" className="w-16 h-16 mb-4" />
+                  <img src="/assets/icons/other.png" alt="Other Contributions" className="w-16 h-16 mb-4 object-contain" />
                   <h3 className="font-bold text-white mb-2">Other Contributions</h3>
                   <p className="text-sm text-slate-400">Additional activity</p>
                 </div>
