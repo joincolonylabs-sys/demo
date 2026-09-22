@@ -12,12 +12,12 @@ import { useEffect, useState } from 'react'
  *               "spacingAndGlyphs" ajuste aussi la chasse (reste du texte)
  */
 
-// Ouverture de la page courante dans le navigateur integre de Jupiter Mobile.
-// Jupiter ne publie pas de lien officiel pour cela : son fichier
-// apple-app-site-association ne declare que /swap, /invite, /gift, /tokens,
-// /radar, /portfolio et /gacha. Le format ci-dessous suit la convention des
-// autres portefeuilles Solana. La page /jup-test permet de confirmer lequel
-// ouvre reellement l'application, il suffit alors de corriger cette ligne.
+// Ouvre la page courante dans le navigateur integre de Jupiter Mobile.
+// Format verifie sur iPhone le 22/09/2026 : il ouvre bien l'application sur
+// la page visee. Jupiter ne le documente pas publiquement, son fichier
+// apple-app-site-association ne declarant que /swap, /invite, /gift, /tokens,
+// /radar, /portfolio et /gacha. La page /jup-test sert a le revalider si
+// l'application venait a changer.
 const OUVRIR_DANS_JUPITER = (url) => `jupiter://browse/${encodeURIComponent(url)}`
 const INSTALLER_JUPITER = 'https://jup.ag/mobile'
 
@@ -110,10 +110,20 @@ export default function Home() {
       </Head>
 
       <style jsx global>{`
-        html, body { margin: 0; padding: 0; background: #000205; }
+        html, body { margin: 0; padding: 0; background: #030D14; }
+        .page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+        /* prolonge la derniere ligne de la maquette jusqu'en bas de l'ecran,
+           plutot que d'etirer l'image ou de laisser une bande noire */
+        .prolonge {
+          flex: 1 0 auto;
+          background-image: url(/assets/bord-bas.png);
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+        }
       `}</style>
 
-      <div style={{ position: 'relative', width: '100%', background: '#000205' }}>
+      <div className="page">
+      <div style={{ position: 'relative', width: '100%' }}>
         <img src="/assets/bg-notext.webp" alt="" style={{ display: 'block', width: '100%', height: 'auto' }} />
 
         <svg
@@ -210,6 +220,8 @@ export default function Home() {
           <image href="/assets/note-built.png" x={838} y={344} width={168} />
           <image href="/assets/note-same.png" x={838} y={1226} width={168} />
         </svg>
+      </div>
+      <div className="prolonge" />
       </div>
     </>
   )
