@@ -71,6 +71,33 @@ function Ecart({ n }) {
   return <div className="ecart" style={{ backgroundImage: `url(/assets/bord-${n}.png)` }} />
 }
 
+// Reflet qui balaie un bouton pour le mettre en avant
+function Reflet({ id, x, y, w, h, r, duree = 3.4, delai = 0, teinte = '#FFFFFF', force = 0.5, aller_retour = false }) {
+  return (
+    <g clipPath={`url(#fenetre-${id})`}>
+      <defs>
+        <clipPath id={`fenetre-${id}`}>
+          <rect x={x} y={y} width={w} height={h} rx={r} />
+        </clipPath>
+        <linearGradient id={`degrade-${id}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={teinte} stopOpacity="0" />
+          <stop offset="50%" stopColor={teinte} stopOpacity={force} />
+          <stop offset="100%" stopColor={teinte} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <rect
+        className={aller_retour ? 'reflet reflet-va-et-vient' : 'reflet'}
+        x={x - w * 0.38}
+        y={y - 2}
+        width={w * 0.38}
+        height={h + 4}
+        fill={`url(#degrade-${id})`}
+        style={{ animationDuration: `${duree}s`, animationDelay: `${delai}s`, ['--course']: `${w * 1.38}px` }}
+      />
+    </g>
+  )
+}
+
 function Tx({ x, y, size, w, weight = 400, fill = WHITE, ls, anchor, fit = 'spacingAndGlyphs', children }) {
   return (
     <text
@@ -108,6 +135,26 @@ export default function Home() {
     window.location.reload()
   }
 
+  // Ouvre une adresse du site dans Jupiter Mobile, ou y navigue si on y est deja
+  const ouvrir = (chemin) => {
+    if (dansJupiter) {
+      window.location.href = `${chemin}?jup=1`
+      return
+    }
+    const cible = `${window.location.origin}${chemin}?jup=1`
+    const repli = setTimeout(() => {
+      if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
+    }, 1500)
+    window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
+    window.location.href = OUVRIR_DANS_JUPITER(cible)
+  }
+
+  // Les deux boutons Claim mènent a l'etape suivante
+  const versClaim = (e) => {
+    e.preventDefault()
+    ouvrir('/claim')
+  }
+
   // Reste de l'en-tete : ouvre cette meme page dans Jupiter Mobile.
   // Si on y est deja, on se contente de recharger.
   const versJupiter = (e) => {
@@ -116,12 +163,7 @@ export default function Home() {
       window.location.reload()
       return
     }
-    const cible = `${window.location.origin}${window.location.pathname}?jup=1`
-    const repli = setTimeout(() => {
-      if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
-    }, 1500)
-    window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
-    window.location.href = OUVRIR_DANS_JUPITER(cible)
+    ouvrir(window.location.pathname)
   }
 
   return (
@@ -145,6 +187,28 @@ export default function Home() {
         .bloc { position: relative; width: 100%; flex: 0 0 auto; }
         .fond { display: block; width: 100%; height: auto; }
         .calque { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .reflet {
+          animation-name: balayer;
+          animation-timing-function: cubic-bezier(.4, 0, .25, 1);
+          animation-iteration-count: infinite;
+        }
+        .reflet-va-et-vient {
+          animation-name: va-et-vient;
+          animation-direction: alternate;
+          animation-timing-function: ease-in-out;
+        }
+        @keyframes balayer {
+          0%   { transform: translateX(0); }
+          45%  { transform: translateX(var(--course)); }
+          100% { transform: translateX(var(--course)); }
+        }
+        @keyframes va-et-vient {
+          from { transform: translateX(0); }
+          to   { transform: translateX(var(--course)); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .reflet { animation: none; opacity: 0; }
+        }
         .ecart {
           flex: 1 1 0;
           min-height: 0;
@@ -174,6 +238,7 @@ export default function Home() {
           <Tx x={528} y={51} size={14.5} weight={500} fill={NAV} w={32}>More</Tx>
           <path d="M567 44.5 L572.5 50 L578 44.5" fill="none" stroke={NAV} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           <Tx x={858} y={48.5} size={15} weight={600} w={79.5}>Launch App</Tx>
+          <Reflet id="lancer" x={837} y={22} w={143} h={42} r={21} duree={2.6} teinte="#8BF5E4" force={0.3} aller_retour />
 
           {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
           <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
@@ -199,7 +264,13 @@ export default function Home() {
           <Tx x={91.5} y={429.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
           <Tx x={345} y={429.5} size={18} weight={600} w={83}>Learn more</Tx>
 
+          <Reflet id="claim-haut" x={51} y={397} w={242} h={51} r={25.5} duree={3.4} />
+          <Reflet id="savoir" x={311} y={398} w={152} h={49} r={24.5} duree={3.8} delai={0.5} teinte="#9DE8FF" force={0.22} />
+
           <image href="/assets/note-built.png" x={838} y={344} width={168} />
+
+          <Zone x={51} y={397} w={242} h={51} onClick={versClaim} label="Claim your JUP" />
+          <Zone x={311} y={398} w={152} h={49} onClick={versJupiter} label="Learn more" />
 
           {/* ---------- BARRE DE METRIQUES ---------- */}
           <Tx x={137} y={516} size={10} weight={600} fill={LABEL} w={54} fit="spacing">NETWORK</Tx>
@@ -259,7 +330,11 @@ export default function Home() {
           <Tx x={87} y={1258} size={21} fill={SUB} w={486}>Connect your eligible Solana wallet and claim your JUP now.</Tx>
           <Tx x={127} y={1320.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
 
+          <Reflet id="claim-bas" x={86} y={1288} w={253} h={53} r={26.5} duree={3.4} delai={1.1} />
+
           <image href="/assets/note-same.png" x={838} y={1226} width={168} />
+
+          <Zone x={86} y={1288} w={253} h={53} onClick={versClaim} label="Claim your JUP" />
         </Tranche>
 
         <Ecart n={6} />
