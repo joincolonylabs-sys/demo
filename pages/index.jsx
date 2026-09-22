@@ -237,7 +237,7 @@ export default function Home() {
           <Tx x={442} y={51} size={14.5} weight={500} fill={NAV} w={47}>Airdrop</Tx>
           <Tx x={528} y={51} size={14.5} weight={500} fill={NAV} w={32}>More</Tx>
           <path d="M567 44.5 L572.5 50 L578 44.5" fill="none" stroke={NAV} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-          <Tx x={858} y={48.5} size={15} weight={600} w={79.5}>Launch App</Tx>
+          <Tx x={858} y={49} size={15} weight={600} w={79.5}>Launch App</Tx>
           <Reflet id="lancer" x={837} y={22} w={143} h={42} r={21} duree={2.6} teinte="#8BF5E4" force={0.3} aller_retour />
 
           {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
@@ -261,8 +261,8 @@ export default function Home() {
           <Tx x={51} y={287} size={80} weight={800} w={491}>Airdrop is live.</Tx>
           <Tx x={51} y={334} size={21} fill={SUB} w={462}>Eligible Solana wallets can now claim their allocation.</Tx>
           <Tx x={51} y={363.5} size={15} fill={DIM} w={472}>A reward for those who helped grow the Solana ecosystem with Jupiter.</Tx>
-          <Tx x={91.5} y={429.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
-          <Tx x={345} y={429.5} size={18} weight={600} w={83}>Learn more</Tx>
+          <Tx x={91.5} y={426.9} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
+          <Tx x={387.5} y={427.5} size={18} weight={600} anchor="middle" w={83}>Learn more</Tx>
 
           <Reflet id="claim-haut" x={51} y={397} w={242} h={51} r={25.5} duree={3.4} />
           <Reflet id="savoir" x={311} y={398} w={152} h={49} r={24.5} duree={3.8} delai={0.5} teinte="#9DE8FF" force={0.22} />
@@ -328,7 +328,7 @@ export default function Home() {
           {/* ---------- PRET A RECLAMER ---------- */}
           <Tx x={87} y={1219} size={45.5} weight={800} w={332}>Ready to claim?</Tx>
           <Tx x={87} y={1258} size={21} fill={SUB} w={486}>Connect your eligible Solana wallet and claim your JUP now.</Tx>
-          <Tx x={127} y={1320.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
+          <Tx x={127} y={1319.4} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
 
           <Reflet id="claim-bas" x={86} y={1288} w={253} h={53} r={26.5} duree={3.4} delai={1.1} />
 

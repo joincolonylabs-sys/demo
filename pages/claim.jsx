@@ -159,8 +159,8 @@ export default function Claim() {
       <div className="page">
         <Tranche n={1} y0={0} y1={COUPES[0]}>
           <Tx x={186} y={72} size={22} weight={700} ls={-0.01}>Jupiter</Tx>
-          <Tx x={761} y={70} size={16.5} weight={600} fill="#D9F5A8" w={145}>Connect Wallet</Tx>
-          <Reflet id="cw-haut" x={700} y={36} w={208} h={56} r={28} duree={3} teinte="#C8F58A" force={0.22} />
+          <Tx x={762} y={70} size={18} weight={600} fill="#D9F5A8" w={120}>Connect Wallet</Tx>
+          <Reflet id="cw-haut" x={699} y={40} w={209} h={46} r={23} duree={3} teinte="#C8F58A" force={0.22} />
           <Zone x={118} y={38} w={152} h={52} onClick={versAccueil} label="Jupiter, accueil" />
         </Tranche>
 
@@ -222,8 +222,8 @@ export default function Claim() {
           <Tx x={237} y={1184} size={19} weight={600} w={165}>Tokens delivered</Tx>
           <Tx x={238} y={1214} size={16} fill={SOUS_ETAPE} w={205}>JUP arrives in your wallet</Tx>
 
-          <Tx x={452} y={1303} size={21} weight={700} fill={ENCRE} w={165}>Connect Wallet</Tx>
-          <Reflet id="cw-bas" x={136} y={1264} w={752} h={64} r={16} duree={3.6} delai={0.8} force={0.42} />
+          <Tx x={452} y={1302.1} size={21} weight={700} fill={ENCRE} w={165}>Connect Wallet</Tx>
+          <Reflet id="cw-bas" x={136} y={1261} w={751} h={67} r={17} duree={3.6} delai={0.8} force={0.42} />
 
           <Tx x={334} y={1399} size={15} fill={PIED} w={56}>Audited</Tx>
           <Tx x={468} y={1399} size={15} fill={PIED} w={104}>Non-custodial</Tx>
