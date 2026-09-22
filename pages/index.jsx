@@ -4,8 +4,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Airdrop Demo - SOLANA'S LIQUIDITY HUB</title>
-        <meta name="description" content="Airdrop campaign demonstration page" />
+        <title>CATKN - CAT Airdrop</title>
+        <meta name="description" content="CATKN CAT Airdrop - Claim your CAT on Solana" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -25,13 +25,13 @@ export default function Home() {
                 <svg className="w-8 h-8 text-brand-cyan" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
                 </svg>
-                Airdrop
+                CATKN
               </div>
               <nav className="hidden md:flex gap-6">
                 <a href="#" className="text-slate-300 hover:text-white transition">Swap</a>
                 <a href="#" className="text-slate-300 hover:text-white transition">Perps</a>
                 <a href="#" className="text-slate-300 hover:text-white transition">Lend</a>
-                <a href="#" className="text-slate-300 hover:text-white transition">Campaign</a>
+                <a href="#" className="text-slate-300 hover:text-white transition">Airdrop</a>
                 <button className="text-slate-300 hover:text-white transition flex items-center gap-1">More ↓</button>
               </nav>
             </div>
@@ -48,20 +48,20 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <div className="space-y-4">
-                                  <p className="text-brand-cyan font-semibold uppercase tracking-wider">SOLANA'S LIQUIDITY HUB</p>pp>
+                  <p className="text-brand-cyan font-semibold uppercase tracking-wider">SOLANA'S LIQUIDITY HUB</p>
                   <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-                    The <span className="text-brand-cyan">Airdrop</span> is live.
+                    The <span className="text-brand-cyan">CAT</span> Airdrop is live.
                   </h1>
                   <p className="text-xl text-slate-400">
                     Eligible Solana wallets can now claim their allocation.
                   </p>
                   <p className="text-slate-400">
-                    A reward for those who helped grow the Solana ecosystem.
+                    A reward for those who helped grow the Solana ecosystem with CATKN.
                   </p>
                 </div>
                 <div className="flex gap-4">
                   <button className="px-8 py-3 bg-brand-cyan text-slate-900 font-bold rounded-lg hover:bg-brand-lime transition">
-                    Claim your tokens →
+                    Claim your CAT →
                   </button>
                   <button className="px-8 py-3 border border-slate-600 text-white rounded-lg hover:bg-slate-700/50 transition">
                     Learn more
@@ -103,7 +103,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="text-slate-400 text-sm uppercase tracking-wider mb-2">Token</p>
-                <p className="text-2xl font-bold text-brand-cyan">AIRDROP</p>
+                <p className="text-2xl font-bold text-brand-cyan">CAT</p>
               </div>
               <div>
                 <p className="text-slate-400 text-sm uppercase tracking-wider mb-2">Status</p>
@@ -123,15 +123,15 @@ export default function Home() {
                 <div className="space-y-6">
                   <h2 className="text-4xl font-bold">Recognizing our community.</h2>
                   <p className="text-lg text-slate-400">
-                    This airdrop rewards users whose onchain participation contributed to the ecosystem's growth.
+                    CATKN rewards users whose onchain participation contributed to building Solana's liquidity hub.
                   </p>
                 </div>
                 <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700/50">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-brand-cyan to-brand-lime rounded-full"></div>
                     <div>
-                      <p className="font-bold text-white">TOKEN</p>
-                      <p className="text-sm text-slate-400">More users. A stronger ecosystem.</p>
+                      <p className="font-bold text-white">CAT</p>
+                      <p className="text-sm text-slate-400">Liquidity on Solana, strength in community.</p>
                     </div>
                   </div>
                 </div>
@@ -144,12 +144,12 @@ export default function Home() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="space-y-12">
                 <div>
-                  <h2 className="text-4xl font-bold mb-6">Who may qualify?</h2>
+                  <h2 className="text-4xl font-bold mb-6">Who may claim CAT?</h2>
                   <p className="text-lg text-slate-400 mb-8">
-                    Eligibility is based on your onchain activity.
+                    Eligibility is based on your onchain activity with Solana ecosystem protocols.
                   </p>
                   <p className="text-slate-400">
-                    We look at real onchain usage, not social campaigns or promotional tasks.
+                    We look at real onchain usage, verified by chain data, not social metrics.
                   </p>
                 </div>
 
@@ -179,14 +179,14 @@ export default function Home() {
               <div className="bg-gradient-to-r from-slate-800/50 to-slate-700/50 border border-brand-cyan/30 rounded-2xl p-12 text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-brand-cyan/10 rounded-full filter blur-3xl"></div>
                 <div className="relative z-10">
-                  <h2 className="text-4xl font-bold mb-4">Ready to claim?</h2>
+                  <h2 className="text-4xl font-bold mb-4">Ready to claim your CAT?</h2>
                   <p className="text-xl text-slate-400 mb-8">
-                    Connect your eligible wallet and claim your tokens now.
+                    Connect your eligible wallet and secure your allocation now.
                   </p>
                   <button className="px-8 py-3 bg-brand-cyan text-slate-900 font-bold rounded-lg hover:bg-brand-lime transition">
-                    Claim now →
+                    Claim CAT now →
                   </button>
-                  <p className="text-sm text-slate-500 mt-4 italic">Same community. Bigger tomorrow.</p>
+                  <p className="text-sm text-slate-500 mt-4 italic">Stronger liquidity. Stronger ecosystem.</p>
                 </div>
               </div>
             </div>
@@ -198,9 +198,9 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="flex flex-col md:flex-row justify-between items-center gap-8">
               <div className="text-2xl font-bold bg-gradient-to-r from-brand-cyan to-brand-lime bg-clip-text text-transparent">
-                Airdrop
+                CATKN
               </div>
-              <p className="text-slate-400 text-sm">Build. Participate. Earn. Together.</p>
+              <p className="text-slate-400 text-sm">Solana's Liquidity Hub. Powered by community.</p>
               <div className="flex gap-6">
                 <a href="#" className="text-slate-400 hover:text-white transition">X</a>
                 <a href="#" className="text-slate-400 hover:text-white transition">Discord</a>
