@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Airdrop Demo - Liquidity Hub</title>
+        <title>Airdrop Demo - SOLANA'S LIQUIDITY HUB</title>
         <meta name="description" content="Airdrop campaign demonstration page" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -48,15 +48,14 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <div className="space-y-4">
-                  <p className="text-brand-cyan font-semibold uppercase tracking-wider">Liquidity Hub</p>
                   <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-                    The <span className="text-brand-cyan">Token</span> Airdrop is live.
+                    The <span className="text-brand-cyan">Airdrop</span> is live.
                   </h1>
                   <p className="text-xl text-slate-400">
-                    Eligible wallets can now claim their allocation.
+                    Eligible Solana wallets can now claim their allocation.
                   </p>
                   <p className="text-slate-400">
-                    A reward for those who helped grow the ecosystem.
+                    A reward for those who helped grow the Solana ecosystem.
                   </p>
                 </div>
                 <div className="flex gap-4">
