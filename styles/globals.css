@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #0F172A 0%, #1a2e4a 100%);
+  color: #e0e7ff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.orbital {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(47, 217, 196, 0.2);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(47, 217, 196, 0.8) 0%, rgba(47, 217, 196, 0) 70%);
+  filter: blur(40px);
+}
