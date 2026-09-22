@@ -72,9 +72,7 @@ export default function Home() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mt-24 pt-24 border-t border-slate-800">
               <div className="flex gap-4">
-                <svg className="w-6 h-6 text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                </svg>
+                <img src="/assets/icons/stat-network.png" alt="Network" className="w-6 h-6 flex-shrink-0 object-contain" />
                 <div>
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-2">Network</p>
                   <p className="text-xl font-bold text-white">Solana</p>
@@ -82,9 +80,7 @@ export default function Home() {
               </div>
 
               <div className="flex gap-4">
-                <svg className="w-6 h-6 text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                </svg>
+                <img src="/assets/icons/stat-token.png" alt="Token" className="w-6 h-6 flex-shrink-0 object-contain" />
                 <div>
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-2">Token</p>
                   <p className="text-xl font-bold text-cyan-400">CAT</p>
@@ -92,7 +88,7 @@ export default function Home() {
               </div>
 
               <div className="flex gap-4">
-                <div className="w-6 h-6 rounded-full bg-green-500 flex-shrink-0"></div>
+                <img src="/assets/icons/stat-status.png" alt="Status" className="w-6 h-6 flex-shrink-0 object-contain" />
                 <div>
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-2">Status</p>
                   <p className="text-xl font-bold text-white">Live</p>
@@ -100,9 +96,7 @@ export default function Home() {
               </div>
 
               <div className="flex gap-4">
-                <svg className="w-6 h-6 text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
+                <img src="/assets/icons/stat-community.png" alt="Community" className="w-6 h-6 flex-shrink-0 object-contain" />
                 <div>
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-2">Community</p>
                   <p className="text-xl font-bold text-white">700k+ users</p>
@@ -124,7 +118,7 @@ export default function Home() {
 
                 <div className="bg-slate-900/50 rounded-3xl p-8 border border-slate-800">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 flex-shrink-0 bg-gradient-to-br from-cyan-400 to-green-400 rounded-full"></div>
+                    <img src="/assets/icons/about-icon.png" alt="CAT" className="w-16 h-16 flex-shrink-0 object-contain" />
                     <div>
                       <p className="font-bold text-white text-lg">CAT</p>
                       <p className="text-sm text-slate-400">More users. A stronger ecosystem.</p>
