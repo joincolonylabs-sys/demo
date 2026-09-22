@@ -117,10 +117,11 @@ export default function Home() {
         .bloc { position: relative; width: 100%; flex: 0 0 auto; }
         .fond { display: block; width: 100%; height: auto; }
         .calque { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        /* Seule la ligne 1165 de la maquette s'etire ici, celle qui passe juste
-           au-dessus du telephone. Le bloc "Ready to claim" s'allonge donc et le
-           pied de page descend au bas de l'ecran, sans qu'aucun dessin ne soit
-           deforme ni recouvert. Sur un ecran plus court, cette bande disparait. */
+        /* Seule la ligne 1410 de la maquette s'etire ici, prise dans le fond
+           uni qui separe le bloc "Ready to claim" du trait de pied de page.
+           Le pied de page descend donc au bas de l'ecran et le noir s'installe
+           au-dessus de lui, sans qu'aucun dessin ne change de taille.
+           Sur un ecran plus court, cette bande se reduit a rien. */
         .milieu {
           flex: 1 1 auto;
           min-height: 0;
@@ -133,7 +134,7 @@ export default function Home() {
       <div className="page">
       <div className="bloc">
         <img src="/assets/bg-haut.webp" alt="" className="fond" />
-        <svg viewBox="0 0 1024 1165" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
+        <svg viewBox="0 0 1024 1410" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
           {/* ---------- EN-TETE ---------- */}
           <Tx x={105} y={54} size={27} weight={700} ls={-0.015}>Jupiter</Tx>
           <Tx x={234} y={51} size={14.5} weight={500} fill={NAV} w={33}>Swap</Tx>
@@ -201,6 +202,14 @@ export default function Home() {
           <Zone x={810} y={20} w={172} h={48} onClick={versJupiter} label="Launch App" />
 
           <image href="/assets/note-built.png" x={838} y={344} width={168} />
+
+          {/* ---------- PRET A RECLAMER ---------- */}
+          <Tx x={87} y={1219} size={45.5} weight={800} w={332}>Ready to claim?</Tx>
+          <Tx x={87} y={1258} size={21} fill={SUB} w={486}>Connect your eligible Solana wallet and claim your JUP now.</Tx>
+          <Tx x={127} y={1320.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
+
+          {/* annotation manuscrite, decoupee de la maquette */}
+          <image href="/assets/note-same.png" x={838} y={1226} width={168} />
         </svg>
       </div>
 
@@ -208,21 +217,13 @@ export default function Home() {
 
       <div className="bloc">
         <img src="/assets/bg-bas.webp" alt="" className="fond" />
-        <svg viewBox="0 1165 1024 371" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
-          {/* ---------- PRET A RECLAMER ---------- */}
-          <Tx x={87} y={1219} size={45.5} weight={800} w={332}>Ready to claim?</Tx>
-          <Tx x={87} y={1258} size={21} fill={SUB} w={486}>Connect your eligible Solana wallet and claim your JUP now.</Tx>
-          <Tx x={127} y={1320.5} size={19} weight={700} fill={INK} w={130}>Claim your JUP</Tx>
-
+        <svg viewBox="0 1410 1024 126" preserveAspectRatio="xMidYMid meet" className="calque" style={{ fontFamily: POLICE }}>
           {/* ---------- PIED DE PAGE ---------- */}
           <Tx x={103} y={1480} size={22.5} weight={700} ls={-0.015}>Jupiter</Tx>
           <Tx x={196} y={1477.5} size={13.8} fill="#8B96A1" w={151}>Build. Trade. Grow. Together.</Tx>
           <Tx x={819} y={1476.5} size={13.8} fill={FOOT} w={25}>Docs</Tx>
           <Tx x={869} y={1476.5} size={13.8} fill={FOOT} w={41}>Support</Tx>
           <Tx x={936} y={1476.5} size={13.8} fill={FOOT} w={31}>Terms</Tx>
-
-          {/* annotation manuscrite, decoupee de la maquette */}
-          <image href="/assets/note-same.png" x={838} y={1226} width={168} />
         </svg>
       </div>
       </div>
