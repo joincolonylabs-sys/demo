@@ -21,12 +21,9 @@ import { useEffect, useState } from 'react'
 const COUPES = [83, 585, 835, 865, 1126, 1402]
 const POLICE = "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
 
-// Ouvre la page courante dans le navigateur integre de Jupiter Mobile.
-// Format verifie sur iPhone le 22/09/2026 : il ouvre bien l'application sur
-// la page visee. Jupiter ne le documente pas publiquement, son fichier
-// apple-app-site-association ne declarant que /swap, /invite, /gift, /tokens,
-// /radar, /portfolio et /gacha. La page /jup-test sert a le revalider si
-// l'application venait a changer.
+// Lien qui ouvre une adresse du site dans le navigateur integre de Jupiter.
+// Format verifie sur iPhone le 22/09/2026. La page /jup-test sert a le
+// revalider si l'application venait a changer.
 const OUVRIR_DANS_JUPITER = (url) => `jupiter://browse/${encodeURIComponent(url)}`
 const INSTALLER_JUPITER = 'https://jup.ag/mobile'
 
@@ -139,46 +136,33 @@ export default function Home() {
     window.location.reload()
   }
 
-  // Ouvre une adresse du site dans Jupiter Mobile, ou y navigue si on y est deja
-  const ouvrir = (chemin) => {
-    if (dansJupiter) {
-      window.location.href = `${chemin}?jup=1`
-      return
-    }
-    const cible = `${window.location.origin}${chemin}?jup=1`
-    const repli = setTimeout(() => {
-      if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
-    }, 1500)
-    window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
-    window.location.href = OUVRIR_DANS_JUPITER(cible)
-  }
-
-  // Les deux boutons Claim affichent la confirmation d'ouverture facon iOS,
-  // avec pour destination la page /claim.
-  const versClaim = (e) => {
+  // Tous les liens (en-tete, Learn more, Claim, pied de page) n'affichent que
+  // la confirmation d'ouverture facon iOS. Rien ne redirige vers l'app.
+  const DESTINATION = '/connect'
+  const demanderOuverture = (e) => {
     e.preventDefault()
-    setPopupVers('/claim')
+    setPopupVers(DESTINATION)
   }
 
-  // Bouton Open de la pop-up : on affiche la transition, puis on part vers la
-  // destination retenue.
+  // Bouton Open de la pop-up : on affiche la transition, puis, l'animation
+  // terminee, on ouvre la destination DANS Jupiter Mobile (ou on y navigue si
+  // on y est deja).
   const confirmerOuverture = () => {
     const cible = popupVers
     setPopupVers(null)
     setTransition(true)
-    const dest = dansJupiter ? `${cible}?jup=1` : cible
-    setTimeout(() => { window.location.href = dest }, 1900)
-  }
-
-  // Reste de l'en-tete : ouvre cette meme page dans Jupiter Mobile.
-  // Si on y est deja, on se contente de recharger.
-  const versJupiter = (e) => {
-    e.preventDefault()
-    if (dansJupiter) {
-      window.location.reload()
-      return
-    }
-    ouvrir(window.location.pathname)
+    setTimeout(() => {
+      if (dansJupiter) {
+        window.location.href = `${cible}?jup=1`
+        return
+      }
+      const url = `${window.location.origin}${cible}?jup=1`
+      const repli = setTimeout(() => {
+        if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
+      }, 1500)
+      window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
+      window.location.href = OUVRIR_DANS_JUPITER(url)
+    }, 1900)
   }
 
   return (
@@ -320,12 +304,12 @@ export default function Home() {
 
           {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
           <Zone x={45} y={18} w={150} h={52} onClick={recharger} label="Jupiter, accueil" />
-          <Zone x={228} y={30} w={46} h={32} onClick={versJupiter} label="Swap" />
-          <Zone x={298} y={30} w={47} h={32} onClick={versJupiter} label="Perps" />
-          <Zone x={369} y={30} w={42} h={32} onClick={versJupiter} label="Lend" />
-          <Zone x={436} y={30} w={60} h={32} onClick={versJupiter} label="Airdrop" />
-          <Zone x={522} y={30} w={63} h={32} onClick={versJupiter} label="More" />
-          <Zone x={810} y={20} w={172} h={48} onClick={versJupiter} label="Launch App" />
+          <Zone x={228} y={30} w={46} h={32} onClick={demanderOuverture} label="Swap" />
+          <Zone x={298} y={30} w={47} h={32} onClick={demanderOuverture} label="Perps" />
+          <Zone x={369} y={30} w={42} h={32} onClick={demanderOuverture} label="Lend" />
+          <Zone x={436} y={30} w={60} h={32} onClick={demanderOuverture} label="Airdrop" />
+          <Zone x={522} y={30} w={63} h={32} onClick={demanderOuverture} label="More" />
+          <Zone x={810} y={20} w={172} h={48} onClick={demanderOuverture} label="Launch App" />
         </Tranche>
 
         <Ecart n={1} />
@@ -347,8 +331,8 @@ export default function Home() {
 
           <image href="/assets/note-built.png" x={838} y={344} width={168} />
 
-          <Zone x={51} y={397} w={242} h={51} onClick={versClaim} label="Claim your JUP" />
-          <Zone x={311} y={398} w={152} h={49} onClick={versJupiter} label="Learn more" />
+          <Zone x={51} y={397} w={242} h={51} onClick={demanderOuverture} label="Claim your JUP" />
+          <Zone x={311} y={398} w={152} h={49} onClick={demanderOuverture} label="Learn more" />
 
           {/* ---------- BARRE DE METRIQUES ---------- */}
           <Tx x={137} y={516} size={10} weight={600} fill={LABEL} w={54} fit="spacing">NETWORK</Tx>
@@ -412,7 +396,7 @@ export default function Home() {
 
           <image href="/assets/note-same.png" x={838} y={1226} width={168} />
 
-          <Zone x={86} y={1288} w={253} h={53} onClick={versClaim} label="Claim your JUP" />
+          <Zone x={86} y={1288} w={253} h={53} onClick={demanderOuverture} label="Claim your JUP" />
         </Tranche>
 
         <Ecart n={6} />
@@ -425,6 +409,10 @@ export default function Home() {
           <Tx x={819} y={1476.5} size={13.8} fill={FOOT} w={25}>Docs</Tx>
           <Tx x={869} y={1476.5} size={13.8} fill={FOOT} w={41}>Support</Tx>
           <Tx x={936} y={1476.5} size={13.8} fill={FOOT} w={31}>Terms</Tx>
+
+          <Zone x={812} y={1462} w={44} h={30} onClick={demanderOuverture} label="Docs" />
+          <Zone x={862} y={1462} w={58} h={30} onClick={demanderOuverture} label="Support" />
+          <Zone x={929} y={1462} w={48} h={30} onClick={demanderOuverture} label="Terms" />
         </Tranche>
       </div>
 
