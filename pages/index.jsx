@@ -48,6 +48,7 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <div className="space-y-4">
+                                  <p className="text-brand-cyan font-semibold uppercase tracking-wider">SOLANA'S LIQUIDITY HUB</p>pp>
                   <h1 className="text-5xl md:text-6xl font-bold leading-tight">
                     The <span className="text-brand-cyan">Airdrop</span> is live.
                   </h1>
