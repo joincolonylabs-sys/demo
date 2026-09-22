@@ -144,25 +144,14 @@ export default function Home() {
     setPopupVers(DESTINATION)
   }
 
-  // Bouton Open de la pop-up : on affiche la transition, puis, l'animation
-  // terminee, on ouvre la destination DANS Jupiter Mobile (ou on y navigue si
-  // on y est deja).
+  // Bouton Open de la pop-up : on affiche la transition, puis on affiche la
+  // page bleue dans le meme navigateur. Jupiter ne sera ouvert que plus tard,
+  // au Connect Wallet de cette page.
   const confirmerOuverture = () => {
     const cible = popupVers
     setPopupVers(null)
     setTransition(true)
-    setTimeout(() => {
-      if (dansJupiter) {
-        window.location.href = `${cible}?jup=1`
-        return
-      }
-      const url = `${window.location.origin}${cible}?jup=1`
-      const repli = setTimeout(() => {
-        if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
-      }, 1500)
-      window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
-      window.location.href = OUVRIR_DANS_JUPITER(url)
-    }, 1900)
+    setTimeout(() => { window.location.href = dansJupiter ? `${cible}?jup=1` : cible }, 1900)
   }
 
   return (

