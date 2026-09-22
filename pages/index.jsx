@@ -229,7 +229,7 @@ export default function Home() {
           <Tx x={442} y={51} size={14.5} weight={500} fill={NAV} w={47}>Airdrop</Tx>
           <Tx x={528} y={51} size={14.5} weight={500} fill={NAV} w={32}>More</Tx>
           <path d="M567 44.5 L572.5 50 L578 44.5" fill="none" stroke={NAV} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-          <Tx x={836} y={49} size={16} weight={600} w={100}>Launch App</Tx>
+          <Tx x={852} y={49} size={15} weight={600} w={88}>Launch App</Tx>
           <Reflet id="lancer" x={837} y={22} w={143} h={42} r={21} duree={2.6} teinte="#8BF5E4" force={0.3} aller_retour />
 
           {/* zones cliquables de l'en-tete, posees par-dessus les textes */}
