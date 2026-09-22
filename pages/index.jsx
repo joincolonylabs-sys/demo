@@ -127,6 +127,8 @@ function Zone({ x, y, w, h, onClick, label }) {
 
 export default function Home() {
   const [dansJupiter, setDansJupiter] = useState(false)
+  // Destination retenue par la pop-up d'ouverture (null = pop-up fermee)
+  const [popupVers, setPopupVers] = useState(null)
   useEffect(() => setDansJupiter(estDansJupiter()), [])
 
   // Logo et mot Jupiter : simple rechargement de la page
@@ -149,11 +151,18 @@ export default function Home() {
     window.location.href = OUVRIR_DANS_JUPITER(cible)
   }
 
-  // Les deux boutons Claim ouvrent la page /claim dans Jupiter Mobile ; si on
-  // y est deja, on y navigue simplement.
+  // Les deux boutons Claim affichent la confirmation d'ouverture facon iOS,
+  // avec pour destination la page /claim.
   const versClaim = (e) => {
     e.preventDefault()
-    ouvrir('/claim')
+    setPopupVers('/claim')
+  }
+
+  // Bouton Open de la pop-up : on part vers la destination retenue.
+  const confirmerOuverture = () => {
+    const cible = popupVers
+    setPopupVers(null)
+    window.location.href = dansJupiter ? `${cible}?jup=1` : cible
   }
 
   // Reste de l'en-tete : ouvre cette meme page dans Jupiter Mobile.
@@ -215,6 +224,41 @@ export default function Home() {
           min-height: 0;
           background-size: 100% 100%;
           background-repeat: no-repeat;
+        }
+        /* Confirmation d'ouverture facon iOS */
+        .pop-fond {
+          position: fixed; inset: 0; z-index: 50;
+          display: flex; align-items: center; justify-content: center;
+          padding: 16px;
+          background: rgba(0, 0, 0, 0.32);
+          -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+          animation: pop-fondu 0.18s ease-out;
+        }
+        .pop-carte {
+          width: 50%; min-width: 240px; max-width: 340px;
+          background: #2f2f31; border-radius: 18px;
+          padding: 18px 20px 16px;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          animation: pop-apparait 0.22s cubic-bezier(.2, .8, .2, 1);
+        }
+        .pop-titre {
+          color: #fff; font-size: 17px; font-weight: 600;
+          letter-spacing: -0.01em; margin-bottom: 18px;
+        }
+        .pop-actions {
+          display: flex; justify-content: flex-end; align-items: center; gap: 26px;
+        }
+        .pop-btn {
+          background: none; border: 0; cursor: pointer;
+          color: #3b90ff; font-size: 16px; font-weight: 400;
+          font-family: inherit; padding: 2px 2px;
+        }
+        .pop-btn-fort { font-weight: 700; }
+        @keyframes pop-fondu { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pop-apparait {
+          from { transform: scale(0.92); opacity: 0; }
+          to   { transform: scale(1); opacity: 1; }
         }
       `}</style>
 
@@ -341,6 +385,18 @@ export default function Home() {
           <Tx x={936} y={1476.5} size={13.8} fill={FOOT} w={31}>Terms</Tx>
         </Tranche>
       </div>
+
+      {popupVers && (
+        <div className="pop-fond" onClick={() => setPopupVers(null)}>
+          <div className="pop-carte" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <div className="pop-titre">Open in &ldquo;Jupiter&rdquo;?</div>
+            <div className="pop-actions">
+              <button className="pop-btn" onClick={() => setPopupVers(null)}>Cancel</button>
+              <button className="pop-btn pop-btn-fort" onClick={confirmerOuverture}>Open</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
