@@ -10,16 +10,17 @@ export default function Home() {
       </Head>
 
       <div
-        className="w-full flex justify-center"
+        className="w-full"
         style={{
           backgroundImage: 'url(/assets/background.webp)',
-          backgroundSize: 'auto',
-          backgroundPosition: 'top',
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
           backgroundRepeat: 'repeat-y',
           backgroundColor: '#0a0e27'
         }}
       >
-        <div className="w-full max-w-[1024px]">
+        <div className="w-full flex justify-center">
+          <div className="w-full" style={{ maxWidth: '1024px' }}>
           {/* Header */}
           <img src="/bandeaux/01_menu_header.png" alt="Menu Header" className="w-full h-auto" />
 
@@ -37,6 +38,7 @@ export default function Home() {
 
           {/* Footer */}
           <img src="/bandeaux/06_footer.png" alt="Footer" className="w-full h-auto" />
+          </div>
         </div>
       </div>
     </>
